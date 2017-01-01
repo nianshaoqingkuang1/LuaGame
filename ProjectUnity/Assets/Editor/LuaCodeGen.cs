@@ -1320,10 +1320,13 @@ namespace SLua
 				PropPair pp = propname[f];
 				Write(file, "addMember(l,\"{0}\",{1},{2},{3});", f, pp.get, pp.set, pp.isInstance ? "true" : "false");
 			}
+
 			if (t.BaseType != null && !CutBase(t.BaseType))
 			{
 				if (t.BaseType.Name.Contains("UnityEvent`"))
 					Write(file, "createTypeMetatable(l,{2}, typeof({0}),typeof(LuaUnityEvent_{1}));", TypeDecl(t), _Name(GenericName(t.BaseType)), constructorOrNot(t));
+				else if(t.BaseType.Name.Contains("`"))//基类为范型
+					Write(file, "createTypeMetatable(l,{1}, typeof({0}));", TypeDecl(t), constructorOrNot(t));
 				else
 					Write(file, "createTypeMetatable(l,{2}, typeof({0}),typeof({1}));", TypeDecl(t), TypeDecl(t.BaseType), constructorOrNot(t));
 			}

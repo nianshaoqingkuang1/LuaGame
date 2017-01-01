@@ -256,7 +256,7 @@ public class GameUtil
     public static string ToHexString(byte[] bytes, string sep = ",")
     {
         string byteStr = string.Empty;
-        if (bytes != null || bytes.Length > 0)
+        if (bytes != null && bytes.Length > 0)
         {
             int nPos = 0;
             foreach (var item in bytes)
@@ -273,7 +273,7 @@ public class GameUtil
     public static string ToBytesString(byte[] bytes, string sep = ",")
     {
         string byteStr = string.Empty;
-        if (bytes != null || bytes.Length > 0)
+        if (bytes != null && bytes.Length > 0)
         {
             int nPos = 0;
             foreach (var item in bytes)

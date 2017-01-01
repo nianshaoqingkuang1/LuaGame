@@ -231,7 +231,6 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
     protected override void Awake()
     {
         base.Awake();
-        
         RunApp();
     }
 #if TEST_EASYSOCKET

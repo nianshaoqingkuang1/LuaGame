@@ -87,12 +87,12 @@ namespace FGame.Manager
             // Load asset from assetBundle.
             string abName = abname.ToLower() + AppConst.ExtName;
             //LogUtil.Log(string.Format("LoadAssetBundle:{0}", abName));
-            AssetBundleAssetOperation request = ResourceManager.LoadAssetAsync(abName, assetName, typeof(GameObject));
+			AssetBundleAssetOperation request = ResourceManager.LoadAssetAsync(abName, assetName, typeof(UnityEngine.Object));
             if (request == null) yield break;
             yield return StartCoroutine(request);
 
             // Get the asset.
-            GameObject prefab = request.GetAsset<GameObject>();
+			UnityEngine.Object prefab = request.GetAsset<UnityEngine.Object>();
             if (func != null) {
                 func.call(prefab);
                 func.Dispose();

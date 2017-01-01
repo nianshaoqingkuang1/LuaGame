@@ -16,14 +16,24 @@ public class BackgroundMusic : PersistentHumbleSingleton<BackgroundMusic>
     protected virtual void Start () 
 	{
 		_source = gameObject.AddComponent<AudioSource>() as AudioSource;	
-		_source.playOnAwake=false;
-		_source.spatialBlend=0;
-		_source.rolloffMode = AudioRolloffMode.Logarithmic;
-		_source.loop=true;	
-	
-		_source.clip=SoundClip;
+		PlayBackgroundMusic (SoundClip);
 
-        SoundManager.Instance.PlayBackgroundMusic(_source);
+	}
+
+	public void PlayBackgroundMusic(AudioClip clip)
+	{
+		if (clip == null)
+			return;
+		SoundClip = clip;
+
+		_source.playOnAwake = false;
+		_source.spatialBlend = 0;
+		_source.rolloffMode = AudioRolloffMode.Logarithmic;
+		_source.loop = true;	
+
+		_source.clip = SoundClip;
+
+		SoundManager.Instance.PlayBackgroundMusic(_source);
 	}
 
     protected virtual void OnEnable()

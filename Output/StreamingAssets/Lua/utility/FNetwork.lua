@@ -32,7 +32,7 @@ do
 		local passwd = self.m_UserInfo.passwd
 		warn("Connect To " .. self.m_ip .. ":" .. self.m_port .. " as " .. name .. "@" .. passwd)
 		self.m_status = "connecting"
-		self.m_Network:ConnectTo(self.m_ip,self.m_port, 5)
+		self.m_Network:ConnectTo(self.m_ip,self.m_port)
 	end
 
 	function FNetwork:ConnectTo(ip,port,name,passwd)
@@ -71,7 +71,11 @@ do
 		    local buffer = NewByteBuffer()
 		    buffer:WriteBytesString(msgbuf)
 		    local bytes = buffer:ToBytes()
-		    warn("Send bytes:", GameUtil.ToBytesString(bytes))
+		    buffer:Close()
+		    buffer = NewByteBuffer(bytes)
+		    bytes = buffer:ReadBytes()
+		    buffer:Close()
+		    warn("Send bytes:", GameUtil.ToBytesString(bytes, ","))
 		else
 			warn("Can not GetPbId pb_class:",pb_class)
 		end
