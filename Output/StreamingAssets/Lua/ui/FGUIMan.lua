@@ -48,6 +48,7 @@ do
 
 	    local canScaler = goCanvas:AddComponent(UnityEngine.UI.CanvasScaler);
 	    canScaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize
+	    canScaler.screenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.Expand
 	    canScaler.referenceResolution = Vector2(960,640)
 
 	    goCanvas:AddComponent(UnityEngine.UI.GraphicRaycaster);

@@ -38,6 +38,8 @@ do
 	function FLoginUI:OnClick(go)
 		if go.name == "btn_login" then
 			self:Connect()	
+			local FWaitingUI = require "ui.FWaitingUI"
+			FWaitingUI.Instance():ShowTip(nil)
 		elseif go.name == "btn_server" then
 			local FServerListUI = require "ui.FServerListUI"
 			FServerListUI.Instance():ShowPanel(true)
