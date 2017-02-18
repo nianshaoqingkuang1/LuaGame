@@ -65,7 +65,7 @@ public class Packager {
 	[MenuItem("Pack Assets/步骤2.打成一个Zip包", false, 12)]
 	public static void PackUnityRes()
 	{
-		string dst_res = Application.dataPath +  "/StreamingAssets/data.zip";
+		string dst_res = Application.dataPath +  "/res_base/StreamingAssets/data.zip";
 
 		string src_res = GetResourceSrcPath();
 

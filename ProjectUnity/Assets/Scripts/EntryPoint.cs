@@ -134,8 +134,8 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     IEnumerator _LoadStreamingAssets()
     {
-		string sourceFileName = ResourceManager.assetDir;
-        string filename = GameUtil.AssetRoot + sourceFileName;
+		string sourceFileName = "res_base/data.zip";
+        string filename = GameUtil.AssetRoot + "/" + sourceFileName;
 
         byte[] bytes = null;
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || USE_ZIPASSETS
