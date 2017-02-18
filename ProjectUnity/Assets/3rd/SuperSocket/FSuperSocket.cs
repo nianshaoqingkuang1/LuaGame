@@ -39,6 +39,7 @@ namespace SuperSocket.ClientEngine
                 byte[] payload = ms.ToArray();
                 return Send(payload, 0, payload.Length);
             }
+			//return Send (buffer, 0, buffer.Length);
         }
 
         protected int Send(byte[] buffer,int offset,int length)
