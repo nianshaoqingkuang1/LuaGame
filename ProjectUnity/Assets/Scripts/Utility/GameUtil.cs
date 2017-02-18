@@ -70,9 +70,9 @@ public class GameUtil
             if (!string.IsNullOrEmpty(assetRoot))
                 return assetRoot;
 #if UNITY_EDITOR && !USE_ZIPASSETS
-			return Path.Combine(Application.dataPath, "../../Output/" + AppConst.AssetDirname) ;
+			return Path.Combine(Application.dataPath, "../../Output") ;
 #else
-			return Path.Combine(Application.persistentDataPath, AppConst.AssetDirname);
+			return Application.persistentDataPath;
 #endif
         }
         set
@@ -80,21 +80,15 @@ public class GameUtil
             assetRoot = value;
         }
     }
-
+	//资源根目录
     public static string AssetPath
     {
         get
         {
-            string platform = GetPlatformFolderForAssetBundles();
-			if (platform != "") {
-				string p = Path.Combine (AssetRoot, platform);
-				return Path.Combine (p, AppConst.AssetDirname);
-			}
-            else
-				return Path.Combine(AssetRoot,AppConst.AssetDirname);
+			return Path.Combine(AssetRoot,"StreamingAssets");
         }
     }
-
+	//Lua脚步根目录
     private static string luaPath;
     public static string LuaPath
     {

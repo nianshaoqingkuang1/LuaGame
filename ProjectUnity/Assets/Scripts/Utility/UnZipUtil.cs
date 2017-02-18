@@ -7,6 +7,7 @@ namespace UnZipUtil
 {
     public class XSharpUnZip
     {
+		public static string _password = "LuaGame";
         
         public static bool ZipDirectory(string zipFileName,string directory,string password = null,string filefilter = null)
         {

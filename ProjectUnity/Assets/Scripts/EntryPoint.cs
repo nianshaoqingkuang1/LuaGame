@@ -134,7 +134,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     IEnumerator _LoadStreamingAssets()
     {
-        string sourceFileName = AppConst.ZipName;
+		string sourceFileName = ResourceManager.assetDir;
         string filename = GameUtil.AssetRoot + sourceFileName;
 
         byte[] bytes = null;
@@ -189,7 +189,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
             yield return new WaitForEndOfFrame();
 
             //解压缩
-			if (!UnZipUtil.XSharpUnZip.UnZipDirectory (filename, GameUtil.AssetRoot, AppConst.AppName)) {
+			if (!UnZipUtil.XSharpUnZip.UnZipDirectory (filename, GameUtil.AssetRoot, UnZipUtil.XSharpUnZip._password)) {
 				LogUtil.LogError ("Failed to unzip streamingAssets.");
 				yield break;
 			}

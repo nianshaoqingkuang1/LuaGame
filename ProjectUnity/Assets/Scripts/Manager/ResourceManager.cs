@@ -22,6 +22,8 @@ namespace FGame.Manager
     // Class takes care of loading assetBundle and its dependencies automatically, loading variants automatically.
     [CustomLuaClass]
     public class ResourceManager : MonoBehaviour {
+		public static string assetDir = "StreamingAssets";
+		public static string assetExt = ".assetbundle";
 
         private static ResourceManager _instance = null;
         public static ResourceManager Instance
@@ -80,12 +82,12 @@ namespace FGame.Manager
         }
 
         IEnumerator OnLoadAsset(string abname, string assetName, LuaFunction func) {
-            AssetBundleManifestOperation requestManifest = ResourceManager.Initialize(AppConst.AssetDirname);
+			AssetBundleManifestOperation requestManifest = ResourceManager.Initialize(assetDir);
             if (requestManifest != null)
                 yield return StartCoroutine(requestManifest);
             
             // Load asset from assetBundle.
-            string abName = abname.ToLower() + AppConst.ExtName;
+			string abName = abname.ToLower() + assetExt;
             //LogUtil.Log(string.Format("LoadAssetBundle:{0}", abName));
 			AssetBundleAssetOperation request = ResourceManager.LoadAssetAsync(abName, assetName, typeof(UnityEngine.Object));
             if (request == null) yield break;
@@ -240,8 +242,8 @@ namespace FGame.Manager
         static public void UnloadAssetBundle(string assetBundleName) {
             //LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory before unloading " + assetBundleName);
             assetBundleName = assetBundleName.ToLower();
-            if (!assetBundleName.Equals(AppConst.AssetDirname) && !assetBundleName.EndsWith(AppConst.ExtName)){
-                assetBundleName += AppConst.ExtName;
+			if (!assetBundleName.Equals(assetDir) && !assetBundleName.EndsWith(assetExt)){
+				assetBundleName += assetExt;
             }
 
             UnloadAssetBundleInternal(assetBundleName);
@@ -359,6 +361,8 @@ namespace FGame.Manager
 {
     [CustomLuaClass]
     public class ResourceManager : MonoBehaviour {
+		public static string assetDir = "StreamingAssets";
+		public static string assetExt = ".assetbundle";
         private string[] m_Variants = { };
         private AssetBundleManifest manifest;
         private AssetBundle shared, assetbundle;
@@ -387,7 +391,7 @@ namespace FGame.Manager
         public void Initialize(string assetpath) {
             AssetPath = assetpath;
             byte[] stream = null;
-            string uri = AssetPath + AppConst.AssetDirname;
+			string uri = AssetPath + assetDir;
             bundles = new Dictionary<string, AssetBundle>();
             if (!File.Exists(uri)) return;
 #if !UNITY_WEBPLAYER
@@ -429,8 +433,8 @@ namespace FGame.Manager
         /// <param name="abname"></param>
         /// <returns></returns>
         AssetBundle LoadAssetBundle(string abname) {
-            if (!abname.EndsWith(AppConst.ExtName)){
-                abname += AppConst.ExtName;
+			if (!abname.EndsWith(assetExt)){
+				abname += assetExt;
             }
             AssetBundle bundle = null;
             if (!bundles.ContainsKey(abname)) {
@@ -504,8 +508,8 @@ namespace FGame.Manager
         public void UnloadAssetBundle(string assetBundleName) {
             //LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory before unloading " + assetBundleName);
             assetBundleName = assetBundleName.ToLower();
-            if(!assetBundleName.Equals(AppConst.AssetDirname) && !assetBundleName.EndsWith(AppConst.ExtName)){
-                assetBundleName += AppConst.ExtName;
+			if(!assetBundleName.Equals(assetDir) && !assetBundleName.EndsWith(assetExt)){
+				assetBundleName += assetExt;
             }
 
             UnloadAssetBundleInternal(assetBundleName);

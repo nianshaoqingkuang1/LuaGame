@@ -45,43 +45,42 @@ public class ExInputWindow : EditorWindow
 
 public class Packager {
         
-    [MenuItem("Pack/步骤1.打包AssetBundle/Build iPhone Resource", false, 11)]
-    public static void BuildiPhoneResource() {
-        string output = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/", "");
-        if (output.Length == 0)
-            return;
-        output += "/StreamingAssets/iOS/StreamingAssets/";
-        BuildAssetResource(output,BuildTarget.iOS, false);
-    }
+	[MenuItem("Pack Assets/步骤1.打包AssetBundle", false, 11)]
+	public static void ExportAllAssets()
+	{
+		string dst_path = Application.dataPath + "/../../Output/StreamingAssets";
 
-    [MenuItem("Pack/步骤1.打包AssetBundle/Build OSX Resource", false, 12)]
-    public static void BuildMacResource()
-    {
-        string output = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/", "");
-        if (output.Length == 0)
-            return;
-        output += "/StreamingAssets/OSX/StreamingAssets/";
-        BuildAssetResource(output, BuildTarget.StandaloneOSXIntel, false);
-    }
+		BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+		UnityLog.Log(string.Format("打包资源到目录:{0},平台:{1}", dst_path, target.ToString()));
 
-    [MenuItem("Pack/步骤1.打包AssetBundle/Build Android Resource", false, 13)]
-    public static void BuildAndroidResource() {
-        string output = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/", "");
-        if (output.Length == 0)
-            return;
-        output += "/StreamingAssets/Android/StreamingAssets/";
-        BuildAssetResource(output,BuildTarget.Android, true);
-    }
+		if (!Directory.Exists(dst_path))
+			Directory.CreateDirectory(dst_path);
 
-    [MenuItem("Pack/步骤1.打包AssetBundle/Build Windows Resource", false, 14)]
-    public static void BuildWindowsResource() {
-        string output = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/", "");
-        if (output.Length == 0)
-            return;
+		BuildPipeline.BuildAssetBundles(dst_path, BuildAssetBundleOptions.None, target);
 
-        output += "/StreamingAssets/Windows/StreamingAssets/";
-        BuildAssetResource(output,BuildTarget.StandaloneWindows, true);
-    }
+		AssetDatabase.Refresh();
+		UnityLog.Log("AssetBundle打包完成");
+	}
+
+	[MenuItem("Pack Assets/步骤2.打成一个Zip包", false, 12)]
+	public static void PackUnityRes()
+	{
+		string dst_res = Application.dataPath +  "/StreamingAssets/data.zip";
+
+		string src_res = GetResourceSrcPath();
+
+		string src_export = src_res;
+		//剔除manifest        
+		foreach (string filename in Directory.GetFiles(src_export, "*.manifest", SearchOption.AllDirectories))
+		{
+			File.Delete(filename);
+		}
+		UnZipUtil.XSharpUnZip.ZipDirectory(dst_res, src_export, UnZipUtil.XSharpUnZip._password);
+
+		UnityLog.Log("Zip包自作完成,path=" + dst_res);
+		AssetDatabase.Refresh();
+	}
+
 
     [MenuItem("Assets/Bundle Name/Attach", false, 15)]
     public static void SetAssetBundleName()
@@ -89,8 +88,8 @@ public class Packager {
         System.Action<string> cb = (str) =>
         {
             string name = str;
-            if (!string.IsNullOrEmpty(name) && !name.EndsWith(AppConst.ExtName))
-                name = name + AppConst.ExtName;
+			if (!string.IsNullOrEmpty(name) && !name.EndsWith(FGame.Manager.ResourceManager.assetExt))
+				name = name + FGame.Manager.ResourceManager.assetExt;
 
             Object[] SelectedAsset = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
 
@@ -101,7 +100,7 @@ public class Packager {
                 string abName = sp.ToLower().Replace("\\", "/");//.Replace("assets/", "");
                
                 import = AssetImporter.GetAtPath(sp);
-                import.assetBundleName = name!=null ? name : abName + AppConst.ExtName;
+				import.assetBundleName = name!=null ? name : abName + FGame.Manager.ResourceManager.assetExt;
             }
             AssetDatabase.Refresh();
         };
@@ -143,9 +142,9 @@ public class Packager {
         System.Action<string> cb = (str) =>
         {
             string name = str;
-            if (!string.IsNullOrEmpty(name) && !name.EndsWith(AppConst.ExtName))
-                name = name + AppConst.ExtName;
-            name = name != null ? name : AppConst.AssetDirname + AppConst.ExtName;
+			if (!string.IsNullOrEmpty(name) && !name.EndsWith(FGame.Manager.ResourceManager.assetExt))
+				name = name + FGame.Manager.ResourceManager.assetExt;
+			name = name != null ? name : FGame.Manager.ResourceManager.assetDir + FGame.Manager.ResourceManager.assetExt;
             Object[] SelectedAsset = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
             HashSet<string> assetList = new HashSet<string>();
             //Dictionary<string, HashSet<string>> allBundles = new Dictionary<string, HashSet<string>>();
@@ -193,83 +192,15 @@ public class Packager {
         _CreateAssetBunldesMain(dst_path);
     }
     
-    /// <summary>
-    /// 生成绑定素材
-    /// </summary>
-    public static void BuildAssetResource(string path,BuildTarget target, bool isWin) {
-        UnityLog.Log(string.Format("打包资源到目录:{0},平台:{1}", path,target.ToString()));
-
-        if (!Directory.Exists(path))
-            Directory.CreateDirectory(path);
-        
-        BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None, target);
-
-        AssetDatabase.Refresh();
-        UnityLog.Log("AssetBundle打包完成");
-    }
-
     static string GetLuaSrcPath()
     {
         string appPath = Application.dataPath.ToLower();
-        return appPath.Replace("assets", "") + "../Output/StreamingAssets/Lua/";
+        return appPath.Replace("assets", "") + "../Output/Lua/";
     }
     static string GetResourceSrcPath()
     {
         string appPath = Application.dataPath.ToLower();
         return appPath.Replace("assets", "") + "../Output/";
-    }
-
-    static void _EncodeLuaFile(string srcFile, string outFile, bool isWin)
-    {
-        if (!srcFile.ToLower().EndsWith(".lua")) {
-            return;
-        }
-        string appPath = Application.dataPath.ToLower();
-        string luaexe = string.Empty;
-        string args = string.Empty;
-        string exedir = string.Empty;
-        string currDir = Directory.GetCurrentDirectory();
-        if (Application.platform == RuntimePlatform.WindowsEditor) {
-            luaexe = "luajit.exe";
-            args = "-b " + srcFile + " " + outFile;
-            exedir = appPath.Replace("assets", "") + "../tools/LuaEncoder/luajit/";
-        } else if (Application.platform == RuntimePlatform.OSXEditor) {
-            luaexe = "./luac";
-            args = "-o " + outFile + " " + srcFile;
-            exedir = appPath.Replace("assets", "") + "../tools/LuaEncoder/luavm/";
-        }
-
-        UnityLog.Log("EncodeLuaFile:" + srcFile + "==>" + outFile);
-
-        Directory.SetCurrentDirectory(exedir);
-        ProcessStartInfo info = new ProcessStartInfo();
-        info.FileName = luaexe;
-        info.Arguments = args;
-        info.WindowStyle = ProcessWindowStyle.Hidden;
-        info.UseShellExecute = isWin;
-        info.ErrorDialog = true;
-        UnityLog.Log(info.FileName + " " + info.Arguments);
-
-        Process pro = Process.Start(info);
-        pro.WaitForExit();
-        Directory.SetCurrentDirectory(currDir);
-    }
-
-    static void _PackResFiles(string res, string outpath, bool isWin)
-    {
-        List<string> files = new List<string>();
-        GameUtil.Recursive(ref files, res, new string[] { ".meta" });
-
-        for (int i = 0; i < files.Count; ++i)
-        {
-            string newfile = files[i].Replace(res, "");
-            string newpath = outpath + newfile;
-            string path = Path.GetDirectoryName(newpath);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            File.Copy(files[i], newpath, true);
-        }
     }
 
     public static void cleanMeta(string path)
@@ -289,29 +220,6 @@ public class Packager {
                 cleanMeta(dir);
             }
         }
-    }
-
-    [MenuItem("Pack/步骤2.打成一个Zip包")]
-    public static void PackUnityRes()
-    {
-        string dst_res = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/", "");
-        if (dst_res.Length == 0)
-            return;
-
-        dst_res += "/StreamingAssets/" + AppConst.ZipName;
-
-        string src_res = GetResourceSrcPath();
-
-        string src_export = src_res + "StreamingAssets/";
-        //剔除manifest        
-        foreach (string filename in Directory.GetFiles(src_export, "*.manifest", SearchOption.AllDirectories))
-        {
-            File.Delete(filename);
-        }
-        UnZipUtil.XSharpUnZip.ZipDirectory(dst_res, src_export, AppConst.AppName);
-
-        UnityLog.Log("Zip包自作完成,path=" + dst_res);
-		AssetDatabase.Refresh();
     }
 
     static void CopyDirTo(string src,string dst,bool delete = false)
@@ -334,115 +242,6 @@ public class Packager {
                 }
             }
         }
-    }
-
-    static void CopyLuaToPath(string dir,bool isWin,bool encoder = false,string ext = ".bytes")
-    {
-        string src_path = GetLuaSrcPath();
-        List<string> src_files = new List<string>();
-        GameUtil.Recursive(ref src_files, src_path, null);
-        for(int i=0;i<src_files.Count;++i)
-        {
-            string newfile = src_files[i].Replace(src_path, "");
-            string newfilename = GameUtil.FileNameWithoutExt(newfile) + ext;
-            string newfilepath = dir + newfilename;
-            string path = Path.GetDirectoryName(newfilepath);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            if (encoder)
-                _EncodeLuaFile(src_files[i], newfilepath, isWin);
-            else
-                File.Copy(src_files[i], newfilepath,true);
-        }
-        AssetDatabase.Refresh();
-    }
-
-    static void _BuildLuaBundle(string dst_path,bool isWin,bool encoder = false)
-    {
-        string dir_path = Path.GetDirectoryName(dst_path);
-        if (!Directory.Exists(dir_path))
-            Directory.CreateDirectory(dir_path);
-
-        string appPath = Application.dataPath.ToLower();
-        string temp_path = appPath + "/" + AppConst.luatemp + "/";
-        string bundle_path = temp_path + "bundle/";
-        CopyLuaToPath(temp_path, isWin,encoder, AppConst.luaExt);
-
-        if (!Directory.Exists(Path.GetDirectoryName(bundle_path)))
-            Directory.CreateDirectory(Path.GetDirectoryName(bundle_path));
-
-        string[] buildTempList = Directory.GetFiles(temp_path, "*" + AppConst.luaExt, SearchOption.AllDirectories);
-
-        List<string> buildList = new List<string>();
-        for(int i=0;i<buildTempList.Length;++i)
-        {
-            string assetPath = "Assets" + buildTempList[i].Replace(appPath, "");
-            buildList.Add(assetPath);
-        }
-        UnityLog.Log("total files:" + buildTempList.Length);
-
-        //List<Object> list_files = new List<Object>();
-        //for (int i = 0; i < buildList.Count; ++i)
-        //{
-        //    string assetPath = buildList[i];
-        //    Object obj = AssetDatabase.LoadMainAssetAtPath(assetPath);
-        //    if (obj != null)
-        //        list_files.Add(obj);
-        //    else
-        //        UnityLog.LogWarning("can not LoadMainAssetAtPath:" + assetPath);
-        //}
-
-        //if (list_files.Count > 0)
-        //{
-        //    BuildAssetBundleOptions options = BuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets | BuildAssetBundleOptions.DeterministicAssetBundle;
-        //    string bundleName = AppConst.luabundle;
-        //    string output_bundle = bundle_path + bundleName;
-        
-        //    BuildPipeline.BuildAssetBundle(null, list_files.ToArray(), output_bundle, options, EditorUserBuildSettings.activeBuildTarget);
-
-        //    if (Directory.Exists(temp_path)) Directory.Delete(temp_path, true);
-        //    AssetDatabase.Refresh();
-        //}
-
-        AssetBundleBuild build = new AssetBundleBuild();
-        build.assetBundleName = AppConst.luabundle;
-        build.assetNames = buildList.ToArray();
-        AssetDatabase.Refresh();
-
-        BuildAssetBundleOptions options = BuildAssetBundleOptions.DeterministicAssetBundle |
-                                          BuildAssetBundleOptions.UncompressedAssetBundle;
-        BuildPipeline.BuildAssetBundles(bundle_path, new AssetBundleBuild[] { build }, options, EditorUserBuildSettings.activeBuildTarget);
-
-        CopyDirTo(bundle_path, dst_path);
-
-        if (Directory.Exists(temp_path)) Directory.Delete(temp_path, true);
-        AssetDatabase.Refresh();
-
-        UnityLog.Log("lua package build ok.");
-    }
-
-    [MenuItem("Pack/Pack Lua Bundle No Encoder")]
-    public static void BuildLuaAssetBundle()
-    {
-        string dst_path = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/StreamingAssets/", "");
-        if (dst_path.Length == 0)
-            return;
-
-        dst_path += "/StreamingAssets/";
-
-        _BuildLuaBundle(dst_path,true,false);
-    }
-
-    [MenuItem("Pack/Pack Lua Bundle With Encoder")]
-    public static void BuildLuaAssetBundleWithEncoder()
-    {
-        string dst_path = EditorUtility.OpenFolderPanel("Build Assets ", "Assets/StreamingAssets/", "");
-        if (dst_path.Length == 0)
-            return;
-
-        dst_path += "/StreamingAssets/";
-        _BuildLuaBundle(dst_path,true,true);
     }
 }
 #endif
