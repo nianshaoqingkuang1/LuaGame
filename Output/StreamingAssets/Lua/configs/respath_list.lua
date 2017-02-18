@@ -5,6 +5,7 @@ local respath_list =
 	LoginUI = "Assets/Arts/Arts/Prefab/LoginUI.prefab",
 	MsgBoxUI = "Assets/Arts/Arts/Prefab/MsgBoxUI.prefab",
 	ServerListUI = "Assets/Arts/Arts/Prefab/ServerListUI.prefab",
+	BackgroundMusic = "Assets/Arts/Arts/Sound/background.mp3",
 }
 
 return respath_list

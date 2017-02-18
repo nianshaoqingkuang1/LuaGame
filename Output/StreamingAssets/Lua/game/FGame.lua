@@ -69,6 +69,16 @@ do
 		local clsT = LuaHelper.GetClsType("FHotKeyLogic")
 		hotGo:AddComponent(clsT)
 		DontDestroyOnLoad(hotGo)
+
+		local musicGo = NewGameObject("BackgroundMusic")
+		local backgroundMusic = musicGo:AddComponent(LuaHelper.GetClsType("BackgroundMusic"))
+		DontDestroyOnLoad(musicGo)
+		--测试背景音
+		AsyncLoad(ResPathReader.BackgroundMusic, ResPathReader.BackgroundMusic, function(obj)
+			if obj and not backgroundMusic.isNil then
+				backgroundMusic:PlayBackgroundMusic(obj)
+			end
+		end)
 	end
 
 	function FGame:Run()

@@ -48,12 +48,11 @@ do
 	function FLoginUI:Connect()
 		local nameObj = self:FindChildObj(OBJPATH.Name)
 		local passwdObj = self:FindChildObj(OBJPATH.Passwd)
-		local ip = "127.0.0.1"
+		local ip = "192.168.99.131"
 		local port = 3001
 		local name = FGUITools.getInputText(nameObj)
 		local passwd = FGUITools.getInputText(passwdObj)
 		theGame.m_Network:ConnectTo(ip,port,name,passwd)
-		warn("Connect To " .. ip .. ":" .. port .. " as " .. name .. "@" .. passwd)
 	end
 end
 

@@ -47,6 +47,7 @@ namespace SLua
             add(typeof(BestHTTP.HTTPRequest), "HTTPRequest");
             add(typeof(BestHTTP.HTTPResponse), "HTTPResponse");
             add(typeof(BestHTTP.HTTPRequestStates), "HTTPRequestStates");
+			add(typeof(BackgroundMusic), "BackgroundMusic");
 
             // add your custom class here
             // add( type, typename)
@@ -61,6 +62,7 @@ namespace SLua
                 typeof(BinaryReader),
                 typeof(BinaryWriter),
                 typeof(FGame.Common.ByteBuffer),
+				typeof(FGame.Manager.NetworkManager),
             };
         }
 
@@ -101,6 +103,8 @@ namespace SLua
             "UnityEngine.MonoBehaviour.set_useGUILayout",
             "UnityEngine.MonoBehaviour.runInEditMode",
             "UnityEngine.MonoBehaviour.useGUILayout",
+			"UnityEngine.Light.get_lightmappingMode",
+			"UnityEngine.Light.set_lightmappingMode"
         };
         // black list if white list not given
         public static void OnGetNoUseList(out List<string> list)

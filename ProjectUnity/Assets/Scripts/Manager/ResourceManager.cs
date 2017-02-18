@@ -86,13 +86,13 @@ namespace FGame.Manager
             
             // Load asset from assetBundle.
             string abName = abname.ToLower() + AppConst.ExtName;
-            LogUtil.Log(string.Format("LoadAssetBundle:{0}", abName));
-            AssetBundleAssetOperation request = ResourceManager.LoadAssetAsync(abName, assetName, typeof(GameObject));
+            //LogUtil.Log(string.Format("LoadAssetBundle:{0}", abName));
+			AssetBundleAssetOperation request = ResourceManager.LoadAssetAsync(abName, assetName, typeof(UnityEngine.Object));
             if (request == null) yield break;
             yield return StartCoroutine(request);
 
             // Get the asset.
-            GameObject prefab = request.GetAsset<GameObject>();
+			UnityEngine.Object prefab = request.GetAsset<UnityEngine.Object>();
             if (func != null) {
                 func.call(prefab);
                 func.Dispose();
@@ -198,10 +198,10 @@ namespace FGame.Manager
                 return true;
 
             WWW download = null;
-            string url = m_BaseDownloadingURL + assetBundleName;
-            if(m_PckPath != null && File.Exists(m_PckPath + assetBundleName))
+			string url = Path.Combine(m_BaseDownloadingURL, assetBundleName);
+			if(m_PckPath != null && File.Exists(Path.Combine(m_PckPath, assetBundleName)))
             {
-                url = GameUtil.MakePathForWWW(m_PckPath + assetBundleName);
+				url = GameUtil.MakePathForWWW(Path.Combine(m_PckPath, assetBundleName));
                 LogUtil.Log("Use SepFile:" + url);
             }
             // For manifest assetbundle, always download it as we don't have hash for it.
@@ -392,7 +392,7 @@ namespace FGame.Manager
             if (!File.Exists(uri)) return;
 #if !UNITY_WEBPLAYER
             stream = File.ReadAllBytes(uri);
-            assetbundle = AssetBundle.CreateFromMemoryImmediate(stream);
+            assetbundle = AssetBundle.LoadFromMemory(stream);
             manifest = assetbundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             LogUtil.Log("AssetBundleManifest is Loaded");
 #else
@@ -440,7 +440,7 @@ namespace FGame.Manager
                 LoadDependencies(abname);
 
                 stream = File.ReadAllBytes(uri);
-                bundle = AssetBundle.CreateFromMemoryImmediate(stream); //关联数据的素材绑定
+                bundle = AssetBundle.LoadFromMemory(stream); //关联数据的素材绑定
                 bundles.Add(abname, bundle);
             } else {
                 bundles.TryGetValue(abname, out bundle);
