@@ -93,21 +93,19 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void SetupPath()
     {
-        LogUtil.Log("AssetRoot:" + GameUtil.AssetRoot);
-        LogUtil.Log("AssetsPath:" + GameUtil.AssetPath);
-        LogUtil.Log("LuaPath:" + GameUtil.LuaPath);
 #if ASYNC_MODE
         string assetBundlePath = GameUtil.AssetPath ;
         ResourceManager.BaseDownloadingURL = GameUtil.MakePathForWWW(assetBundlePath);
-#if !UNITY_EDITOR || USE_ZIPASSETS
-        if(SepFile)
-            ResourceManager.PckPath = GameUtil.SepPath;
-#endif
+        if(SepFile) ResourceManager.PckPath = GameUtil.SepPath;
 #else
         string assetBundlePath = GameUtil.AssetPath;
         string baseAssetURL = GameUtil.MakePathForWWW(assetBundlePath);
         ResourceManager.Instance.Initialize(baseAssetURL);
 #endif
+        LogUtil.Log("AssetRoot:" + GameUtil.AssetRoot);
+        LogUtil.Log("AssetsPath:" + GameUtil.AssetPath);
+        LogUtil.Log("LuaPath:" + GameUtil.LuaPath);
+        LogUtil.Log("PckPath:" + GameUtil.SepPath);
     }
 
     void SetupLua()
@@ -140,7 +138,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
         byte[] bytes = null;
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || USE_ZIPASSETS
         string sourcepath = GameUtil.MakePathForWWW(Application.streamingAssetsPath + "/" + sourceFileName);
-        LogUtil.Log("load asset from " + sourcepath);
+        LogUtil.Log("UNITY_STANDLONE: load asset from " + sourcepath);
         WWW www = new WWW(sourcepath);
         yield return www;
         if (www.error != null)
@@ -151,7 +149,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
         bytes = www.bytes;
 #elif UNITY_IPHONE
 		string sourcepath = Application.dataPath + "/Raw/" + sourceFileName;
-        LogUtil.Log("load asset from " + sourcepath);
+        LogUtil.Log("UNITY_IPHONE: load asset from " + sourcepath);
 		try{ 
 			using ( FileStream fs = new FileStream(sourcepath, FileMode.Open, FileAccess.Read, FileShare.Read) )
             { 
@@ -165,7 +163,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 		} 
 #elif UNITY_ANDROID
 		string sourcepath = "jar:file://" + Application.dataPath + "!/assets/"+sourceFileName; 			
-		LogUtil.Log("load asset from " + sourcepath); 
+		LogUtil.Log("UNITY_ANDROID: load asset from " + sourcepath); 
 		WWW www = new WWW(sourcepath); 
         yield return www;
         if (www.error != null)

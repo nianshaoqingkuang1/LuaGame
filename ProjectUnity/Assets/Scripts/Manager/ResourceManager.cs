@@ -201,9 +201,9 @@ namespace FGame.Manager
 
             WWW download = null;
 			string url = Path.Combine(m_BaseDownloadingURL, assetBundleName);
-			if(m_PckPath != null && File.Exists(Path.Combine(m_PckPath, assetBundleName)))
+			if(m_PckPath != null && File.Exists(Path.Combine(m_PckPath, assetDir+"/"+assetBundleName)))
             {
-				url = GameUtil.MakePathForWWW(Path.Combine(m_PckPath, assetBundleName));
+				url = GameUtil.MakePathForWWW(Path.Combine(m_PckPath, assetDir+"/"+assetBundleName));
                 LogUtil.Log("Use SepFile:" + url);
             }
             // For manifest assetbundle, always download it as we don't have hash for it.

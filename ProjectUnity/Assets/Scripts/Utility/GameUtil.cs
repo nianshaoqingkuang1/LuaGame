@@ -29,7 +29,6 @@ public class GameUtil
 
     public static string MakePathForLua(string name)
     {
-        string path = LuaPath;
         string lowerName = name.ToLower();
         if (lowerName.EndsWith(".lua"))
         {
@@ -37,8 +36,15 @@ public class GameUtil
             name = name.Substring(0, index);
         }
         name = name.Replace('.', '/');
-		path = Path.Combine(path, name + ".lua");
-        return path;
+        name += ".lua";
+
+        if(EntryPoint.Instance.SepFile && Directory.Exists(GameUtil.SetLuaPath))
+        {
+            if(File.Exists(Path.Combine(GameUtil.SetLuaPath, name)))
+                return Path.Combine(GameUtil.SetLuaPath, name);
+        }
+        
+		return Path.Combine(LuaPath, name);
     }
 
     public static string GetPlatformFolderForAssetBundles()
@@ -71,8 +77,10 @@ public class GameUtil
                 return assetRoot;
 #if UNITY_EDITOR && !USE_ZIPASSETS
 			return Path.Combine(Application.dataPath, "../../Output") ;
+#elif UNITY_ANDROID
+			return Application.persistentDataPath + "/assets"; //è¯¥ç›®å½•æœ‰è¯»å†™æƒé™
 #else
-			return Application.persistentDataPath;
+            return Application.temporaryCachePath + "/assets"; //è¯¥ç›®å½•æœ‰è¯»å†™æƒé™
 #endif
         }
         set
@@ -80,7 +88,7 @@ public class GameUtil
             assetRoot = value;
         }
     }
-	//×ÊÔ´¸ùÄ¿Â¼
+	//èµ„æºè·¯å¾„
     public static string AssetPath
     {
         get
@@ -88,7 +96,7 @@ public class GameUtil
 			return Path.Combine(AssetRoot,"StreamingAssets");
         }
     }
-	//Lua½Å²½¸ùÄ¿Â¼
+	//Luaè·¯å¾„
     private static string luaPath;
     public static string LuaPath
     {
@@ -103,17 +111,27 @@ public class GameUtil
             luaPath = value;
         }
     }
-
-    public static string DataPath
+    //åˆ†ç¦»ç›®å½•
+    public static string SepPath 
     {
-        get
-        {
-#if UNITY_EDITOR && !USE_ZIPASSETS
-            return Application.dataPath;
+        get {
+#if UNITY_EDITOR
+            return Application.dataPath + "/../../pck";
+#elif UNITY_ANDROID
+            return Application.persistentDataPath + "/pck";
 #else
-            return Application.persistentDataPath;
+            return Application.temporaryCachePath + "/pck";
 #endif
         }
+    }
+
+    public static string SetAssetPath
+    {
+        get { return SepPath+"/StreamingAssets"; }
+    }
+    public static string SetLuaPath
+    {
+        get { return SepPath+"/Lua"; }
     }
 
     public static string CachePath
@@ -128,14 +146,7 @@ public class GameUtil
         }
     }
 
-    public static string SepPath
-    {
-        get
-        {
-			return Path.Combine(DataPath,"pck");
-        }
-    }
-
+    //èµ„æºåˆ†ç¦»æ–‡ä»¶æ˜¯å¦å­˜åœ¨
     public static bool IsSepFileExist(string f, out string filename)
     {
         string fn = f.ToLower();
@@ -305,24 +316,24 @@ public class GameUtil
         }));
     }
 
-    //Òì²½HTTP
+    //ï¿½ì²½HTTP
     public static void SendRequest(string url, string data,double t,bool bGet, LuaFunction completeHandler)
     {
-        //Èç¹ûwebÒ³ÃæÊÇ¾²Ì¬·µ»ØÊý¾Ý£¬ÇëÓÃHTTPMethods.Get
+        //ï¿½ï¿½ï¿½ï¿½webÒ³ï¿½ï¿½ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½HTTPMethods.Get
         var request = new HTTPRequest(new Uri(url), bGet ? HTTPMethods.Get : HTTPMethods.Post, (req, resp) =>
         {
             if (completeHandler != null)
             {
-                completeHandler.call(req, resp);  //req, resp ÐèÒª±©Â¶¸øsluaµ¼³ö
+                completeHandler.call(req, resp);  //req, resp ï¿½ï¿½Òªï¿½ï¿½Â¶ï¿½ï¿½sluaï¿½ï¿½ï¿½ï¿½
                 completeHandler.Dispose();
             }
         });
         request.RawData = Encoding.UTF8.GetBytes(data);
-        request.ConnectTimeout = TimeSpan.FromSeconds(t);//³¬Ê±
+        request.ConnectTimeout = TimeSpan.FromSeconds(t);//ï¿½ï¿½Ê±
         request.Send();
     }
 
-    //Òì²½ÏÂÔØ£¬²ÎÊý  complete_param ÊÇÍê³É»Øµ÷µÄÖ´ÐÐ²ÎÊý
+    //ï¿½ì²½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½  complete_param ï¿½ï¿½ï¿½ï¿½ï¿½É»Øµï¿½ï¿½ï¿½Ö´ï¿½Ð²ï¿½ï¿½ï¿½
     public static void DownLoad(string SrcFilePath, string SaveFilePath, bool bGet, bool keepAlive,object complete_param, LuaFunction progressHander, LuaFunction completeHander)
     {
         
