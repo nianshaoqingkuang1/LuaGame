@@ -1,3 +1,8 @@
+--filename: FBaseUI.lua
+--author: lidengfeng
+--email: libyyu@qq.com
+--time: 2017/2/19
+--comment: 所有UI的基类
 local FGUIMan = require "ui.FGUIMan"
 local FDebugOption = require "game.FDebugOption"
 

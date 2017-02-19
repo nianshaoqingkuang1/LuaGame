@@ -1,4 +1,9 @@
---[[]
+--[[
+--filename: FObject.lua
+--author: lidengfeng
+--email: libyyu@qq.com
+--time: 2017/2/19
+--comment: 是Lua面向对象
 ================== Object.lua内容 =======================
 ]]
 local FClass = {}

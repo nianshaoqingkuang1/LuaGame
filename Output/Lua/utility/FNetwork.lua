@@ -1,4 +1,8 @@
-
+--filename: FNetwork.lua
+--author: lidengfeng
+--email: libyyu@qq.com
+--time: 2017/2/19
+--comment: 网络处理类
 local l_instance = nil
 local FNetwork = FLua.Class("FNetwork")
 do
