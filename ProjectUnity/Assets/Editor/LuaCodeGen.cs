@@ -636,6 +636,7 @@ namespace SLua
 			string f = System.IO.Path.Combine(path , name + ".cs");
 			StreamWriter file = new StreamWriter(f, false, Encoding.UTF8);
 			file.NewLine = NewLine;
+			Write(file, "//Auto Generate By LuaInterface, Do Not Edit!");
 			Write(file, "using System;");
 			Write(file, "using System.Collections.Generic;");
 			Write(file, "namespace SLua {");
@@ -758,6 +759,7 @@ namespace SLua
 		void WriteDelegate(Type t, StreamWriter file)
 		{
 			string temp = @"
+//Auto Generate By LuaInterface, Do Not Edit!
 using System;
 using System.Collections.Generic;
 using LuaInterface;
@@ -890,6 +892,7 @@ namespace SLua
 		void WriteEvent(Type t, StreamWriter file)
 		{
 			string temp = @"
+//Auto Generate By LuaInterface, Do Not Edit!
 using System;
 using System.Collections.Generic;
 using LuaInterface;
@@ -1122,6 +1125,7 @@ namespace SLua
 		
 		private void WriteHead(Type t, StreamWriter file)
 		{
+			Write(file, "//Auto Generate By LuaInterface, Do Not Edit!");
 			Write(file, "using System;");
 			Write(file, "using LuaInterface;");
 			Write(file, "using SLua;");
@@ -1254,7 +1258,7 @@ namespace SLua
             {
                 StreamWriter file2 = new StreamWriter(f2, false, Encoding.UTF8);
                 file2.NewLine = NewLine;
-
+				file2.WriteLine("//Auto Generate By LuaInterface, Do Not Edit!");
                 file2.WriteLine("using UnityEngine;");
                 file2.WriteLine("using System;");
                 file2.WriteLine("using LuaInterface;");
