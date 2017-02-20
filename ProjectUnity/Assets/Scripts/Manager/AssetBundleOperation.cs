@@ -64,7 +64,7 @@ namespace FGame.Manager
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
             if (m_Request == null && m_DownloadingError != null) {
-                LogUtil.LogError(m_DownloadingError);
+                LogUtil.LogWarning(m_DownloadingError);
                 return true;
             }
 

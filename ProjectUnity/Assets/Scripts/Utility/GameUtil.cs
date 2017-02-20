@@ -76,7 +76,7 @@ public class GameUtil
             if (!string.IsNullOrEmpty(assetRoot))
                 return assetRoot;
 #if UNITY_EDITOR && !USE_ZIPASSETS
-			return Path.Combine(Application.dataPath, "../../Output") ;
+			return Application.dataPath +  "/../../Output";
 #elif UNITY_ANDROID
 			return Application.persistentDataPath + "/assets"; //该目录有读写权限
 #else
