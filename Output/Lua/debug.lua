@@ -1,12 +1,15 @@
 
--- GameUtil.SendRequest("http://www.baidu.com","hello",3,true,function(req,resp)
--- 	if resp.IsSuccess then
--- 		local str=resp.DataAsText
--- 		print(str)
--- 	else
--- 		print("error")
--- 	end
--- end)
+GameUtil.SendRequest("http://www.baidu.com","hello",3,true,function(req,resp)
+ 	if resp.IsSuccess then
+ 		local str=resp.DataAsText
+ 		--print(str)
+		 f = io.open("test.html", "wb")
+		 f:write(str)
+		 f:close()
+ 	else
+		print("error")
+	end
+end)
 
 -- GameUtil.DownLoad("http://www.baidu.com",
 -- 	"E:/UnityWorks/t.txt",true,true,nil,function(a,b,c)
@@ -23,6 +26,6 @@
 -- 		end
 -- 	end)
 
-GameUtil.AnsyLoadLevel("StartScreen",function(success)
-	print("LoadLevel:StartScreen",success)
-end)
+--GameUtil.AnsyLoadLevel("StartScreen",function(success)
+--	print("LoadLevel:StartScreen",success)
+--end)

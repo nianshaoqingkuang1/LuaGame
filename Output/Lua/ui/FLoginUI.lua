@@ -12,6 +12,8 @@ do
 	function FLoginUI.Instance()
 		if not l_instance then
 			l_instance = FLoginUI.new()
+			l_instance.m_UnloadBundleWhenDestroy = true
+			l_instance.m_TriggerGCWhenDestroy = true
 		end
 		return l_instance
 	end

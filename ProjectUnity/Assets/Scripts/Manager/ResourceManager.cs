@@ -340,6 +340,7 @@ namespace FGame.Manager
             }
 
             if (m_AssetBundleManifest != null) m_AssetBundleManifest = null;
+			Resources.UnloadUnusedAssets ();
             LogUtil.Log("~ResourceManager was destroy!");
         }
 

@@ -187,9 +187,11 @@ do
 		end
 		if self.m_UnloadBundleWhenDestroy then
 			UnloadAssetBundle(self.m_abName)
+			warn("["..self.m_panelName.."] asset is unload.")
 		end
 		if self.m_TriggerGCWhenDestroy then
 			GameUtil.LuaGC()
+			warn("["..self.m_panelName.."] destroyed trigger gc.")
 		end
 	end
 	function FBaseUI:OnClick(go)
