@@ -53,11 +53,6 @@ function OnHotKeyInput( key, down )
 	end
 end
 
-function OnReceiveMessage(protocal,buffer)
-	local FNetwork = require "utility.FNetwork"
-	FNetwork.Instance():OnReceiveMessage(protocal,buffer)
-end
-
 function AsyncLoad(assetBundleName,assetName,cb)
 	local FAssetBundleUtil = require "utility.FAssetBundleUtil"
 	FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,assetName,cb)

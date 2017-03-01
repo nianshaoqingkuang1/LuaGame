@@ -14,6 +14,7 @@ do
 	function FAssetBundleUtil:InitAssetBundle()
 		self.m_AssetsMgr = ResourceManager.Instance
 		self.m_AssetsMgr:TouchInstance()
+		DontDestroyOnLoad(self.m_AssetsMgr.gameObject)
 	end
 
 	function FAssetBundleUtil:AsyncLoad(assetBundleName,assetName,cb)

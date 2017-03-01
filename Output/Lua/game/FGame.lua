@@ -1,6 +1,6 @@
 
 theGame = nil
-local FNetwork = require "utility.FNetwork"
+local FLogicSession = require "network.FLogicSession"
 local FAssetBundleUtil = require "utility.FAssetBundleUtil"
 local FLibEvent = require "utility.FLibEvent"
 local FConsoleUI = require "ui.FConsoleUI"
@@ -13,7 +13,7 @@ do
 	end
 
 	function FGame:_ctor()
-		self.m_Network = nil
+		self.m_LogicNetwork = nil
 		self.m_AssetBundle = nil
 		self.m_LogicEvent = FLibEvent.new("LogicEvent")
 		self.m_LogList = {}
@@ -26,8 +26,8 @@ do
 
 	function FGame:InitGame()
 		--GameManager
-		self.m_Network = FNetwork.Instance()
-		self.m_Network:InitNetwork()
+		self.m_LogicNetwork = FLogicSession.Instance()
+		self.m_LogicNetwork:InitNetwork()
 		self.m_AssetBundle = FAssetBundleUtil.Instance()
 		self.m_AssetBundle:InitAssetBundle()
 		self:InitGameObject()

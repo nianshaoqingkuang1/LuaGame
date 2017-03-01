@@ -56,7 +56,7 @@ do
 		local port = 3001
 		local name = FGUITools.getInputText(nameObj)
 		local passwd = FGUITools.getInputText(passwdObj)
-		theGame.m_Network:ConnectTo(ip,port,name,passwd)
+		theGame.m_LogicNetwork:ConnectTo(ip,port,name,passwd)
 	end
 end
 

@@ -358,6 +358,43 @@ namespace SLua
 			throw new Exception(string.Format("Can't find {0} function", func));
 		}
 
+		public object safe_invoke(string func, params object[] args)
+		{
+			LuaFunction f = (LuaFunction)this[func];
+			if (f != null)
+			{
+				return f.call(args);
+			}
+			else
+				return null;
+		}
+
+		public object invoke_self(string func, params object[] args)
+		{
+			LuaFunction f = (LuaFunction)this[func];
+			if (f != null)
+			{
+				object[] args_with_self = new object[args.Length + 1];
+				args_with_self [0] = this;
+				args.CopyTo (args_with_self, 1);
+				return f.call(args_with_self);
+			}
+			throw new Exception(string.Format("Can't find {0} function", func));
+		}
+
+		public object safe_invoke_self(string func, params object[] args)
+		{
+			LuaFunction f = (LuaFunction)this[func];
+			if (f != null) {
+				object[] args_with_self = new object[args.Length + 1];
+				args_with_self [0] = this;
+				args.CopyTo (args_with_self, 1);
+				return f.call (args_with_self);
+			} 
+			else
+				return null;
+		}
+
 		public int length()
 		{
 			int n = LuaDLL.lua_gettop(L);

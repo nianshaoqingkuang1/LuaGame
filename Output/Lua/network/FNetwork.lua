@@ -2,26 +2,20 @@
 --author: lidengfeng
 --email: libyyu@qq.com
 --time: 2017/2/19
---comment: 网络处理类
-local l_instance = nil
+--comment: 网络处理基础类
 local FNetwork = FLua.Class("FNetwork")
 do
-	function FNetwork:_ctor()
+	function FNetwork:_ctor(name)
+		self.m_GoNetwork = nil
 		self.m_Network = nil
-		self.m_UserInfo = nil
-		self.m_ip = ""
-		self.m_port = 0
 		self.m_status = "broken"
+		self.m_netName = name
 	end
-	function FNetwork.Instance()
-		if not l_instance then
-			l_instance = FNetwork.new()
-		end
-		return l_instance
-	end
+
 	function FNetwork:InitNetwork()
-		self.m_Network = NetworkManager.Instance
-		self.m_Network:TouchInstance()
+		self.m_GoNetwork = NewGameObject(self.m_netName)
+		self.m_Network = self.m_GoNetwork:AddComponent(FGame.Manager.NetworkManager)
+		self.m_Network:SetMsgHandle(self)
 	end
 
 	function FNetwork:Connect()
@@ -32,17 +26,14 @@ do
 			warn("Now is connecting, please waiting.")
 			return
 		end
-		local name = self.m_UserInfo.name
-		local passwd = self.m_UserInfo.passwd
-		warn("Connect To " .. self.m_ip .. ":" .. self.m_port .. " as " .. name .. "@" .. passwd)
+		warn("Connect To " .. self.m_ip .. ":" .. self.m_port )
 		self.m_status = "connecting"
 		self.m_Network:ConnectTo(self.m_ip,self.m_port)
 	end
 
-	function FNetwork:ConnectTo(ip,port,name,passwd)
+	function FNetwork:ConnectTo(ip,port)
 		self.m_ip = ip
 		self.m_port = port
-		self.m_UserInfo = {name=name,passwd=passwd,}
 		self:Connect()
 	end
 
@@ -53,6 +44,13 @@ do
 	function FNetwork:Close()
 		self.m_Network:Close()
 		self.m_status = "broken"
+	end
+
+	function FNetwork:Release()
+		self:Close()
+		DestroyObject(self.m_GoNetwork)
+		self.m_GoNetwork = nil
+		self.m_Network = nil
 	end
 
 	function FNetwork:Ping(ip)
@@ -88,13 +86,6 @@ do
 	function FNetwork:OnConnected()
 		warn("FNetwork:OnConnected")
 		self.m_status = "connected"
-		local name = self.m_UserInfo.name
-		local passwd = self.m_UserInfo.passwd
-		local msg = Share_Common.Stuff_Account()
-		--msg.type_t = Share_Common.Proto_Stuff_Account
-		msg.UserName = name
-		msg.PassWord = passwd
-		self:SendPB(msg)
 	end
 
 	function FNetwork:OnTimeout()
@@ -111,15 +102,6 @@ do
 	function FNetwork:OnDisconnect(reason, err_msg)
 		warn("FNetwork:OnDisconnect reason="..reason .. ",err_msg="..err_msg)
 		self.m_status = reason
-		local content = reason == "broken" and StringReader.Get(1) or StringReader.Get(2)
-		MsgBox(self,content,reason,MsgBoxType.MBBT_OKCANCEL,function(_,ret)
-			if ret == MsgBoxRetT.MBRT_OK then
-				self:Connect()
-			end
-		end)
-
-		--local FLoadingUI = require "ui.FLoadingUI"
-		--FLoadingUI.Instance():ShowPanel(true)
 	end
 
 	function FNetwork:OnPing(buffer)
@@ -128,6 +110,7 @@ do
 	end
 
 	function FNetwork:OnReceiveMessage(protocal,buffer)
+		warn("FNetwork:OnReceiveMessage", protocal, buffer)
 		local Protocal = FGame.Manager.Protocal
 		if protocal == Protocal.Connect then
 			self:OnConnected()
@@ -145,18 +128,6 @@ do
 	end
 
 	function FNetwork:OnGameData(buffer)
-		warn("FNetwork:OnGameData",buffer)
-		local id = buffer:ReadShort()
-		local FPBHelper = require "pb.FPBHelper"
-		local pb_class = FPBHelper.GetPbClass(id)
-		if pb_class then
-			local msg = pb_class()
-			msg:ParseFromString(buffer:ReadeBytesString())
-			FireEvent(FPBHelper.GetPbName(pb_class),msg)
-			warn("Receive PB:",pb_class,msg)
-		else
-			warn("unknow msg id:"..id)
-		end
 	end
 end
 

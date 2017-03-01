@@ -20,23 +20,7 @@ namespace FGame.Manager
 
     [CustomLuaClass]
     public class NetworkManager : MonoBehaviour {
-        public string MethodName = "OnReceiveMessage";
-
-        private static NetworkManager _instance = null;
-        public static NetworkManager Instance
-        {
-            get {
-                if(null == _instance)
-                {
-                    GameObject go = new GameObject("NetworkManager");
-                    _instance = go.AddComponent<NetworkManager>();
-                }
-                return _instance;
-            }
-        }
-        public void TouchInstance()
-        {  }
-
+		
         private object lockobj = new object();
         private Queue<KeyValuePair<Protocal, ByteBuffer>> sEvents = new Queue<KeyValuePair<Protocal, ByteBuffer>>();
 
@@ -59,6 +43,10 @@ namespace FGame.Manager
         void OnDestroy()
         {
             LogicSocket.Close();
+			if (luaNetwork != null) {
+				luaNetwork.Dispose ();
+				luaNetwork = null;
+			}
         }
 
         [DoNotToLua]
@@ -70,21 +58,20 @@ namespace FGame.Manager
             }
         }
 
+		private LuaTable luaNetwork;
+		public void SetMsgHandle(LuaTable _luaNet)
+		{
+			if (luaNetwork != null) {
+				luaNetwork.Dispose ();
+			}
+			luaNetwork = _luaNet;
+		}
+
         protected void CallMethod(string funcname,params object[] args)
         {
-            if (null == LuaSvr.main || !LuaSvr.main.inited || null == LuaSvr.main.luaState)
+			if (null == luaNetwork)
                 return;
-            LuaState l = LuaSvr.main.luaState;
-            LuaFunction func = l.getFunction(funcname);
-            if (null != func)
-            {
-                func.call(args);
-                func.Dispose();
-            }
-            else
-            {
-                LogUtil.LogWarning("function {0} is not exits.",funcname);
-            }
+			luaNetwork.safe_invoke_self (funcname, args);
         }
 
         /// <summary>
@@ -99,7 +86,7 @@ namespace FGame.Manager
                     while (sEvents.Count > 0)
                     {
                         KeyValuePair<Protocal, ByteBuffer> _event = sEvents.Dequeue();
-                        CallMethod(MethodName, new object[] { _event.Key, _event.Value });
+						CallMethod("OnReceiveMessage", new object[] { _event.Key, _event.Value });
                     }
                 }
             }
