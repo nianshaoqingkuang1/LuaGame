@@ -27,6 +27,22 @@ public class GameUtil
             return path;
     }
 
+	public static string MakePathFromWWW(string path)
+	{
+		if (path.IndexOf("://") != -1)
+		{
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+			string head = "file:///";
+			return path.Substring(head.Length,path.Length-head.Length);
+#else
+			string head = "file://";
+			return path.Substring(head.Length,path.Length-head.Length).
+#endif
+		}
+		else
+			return path;
+	}
+
     public static string MakePathForLua(string name)
     {
         string lowerName = name.ToLower();
