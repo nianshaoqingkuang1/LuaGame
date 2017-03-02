@@ -207,10 +207,10 @@ namespace FGame.Manager
                 LogUtil.Log("Use SepFile:" + url);
             }
             // For manifest assetbundle, always download it as we don't have hash for it.
-            if (isLoadingAssetBundleManifest)
-                download = new WWW(url);
-            else
-                download = WWW.LoadFromCacheOrDownload(url, m_AssetBundleManifest.GetAssetBundleHash(assetBundleName), 0);
+			if (isLoadingAssetBundleManifest)
+				download = new WWW (url);
+			else
+				download = WWW.LoadFromCacheOrDownload (url, 0);//m_AssetBundleManifest.GetAssetBundleHash(assetBundleName), 0);
 
             m_DownloadingWWWs.Add(assetBundleName, download);
 

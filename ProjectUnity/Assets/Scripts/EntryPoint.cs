@@ -106,6 +106,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
         LogUtil.Log("AssetsPath:" + GameUtil.AssetPath);
         LogUtil.Log("LuaPath:" + GameUtil.LuaPath);
         LogUtil.Log("PckPath:" + GameUtil.SepPath);
+		LogUtil.Log("TempPath:" + Application.temporaryCachePath);
     }
 
     void SetupLua()
