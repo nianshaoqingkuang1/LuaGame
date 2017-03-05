@@ -31,7 +31,7 @@ do
 		end
 	end
 
-	function FLoadingUI:OnCreate()
+	function FLoadingUI:OnCreate()		
 		self.m_progress = self:FindChildObj(OBJPATH.progress):GetComponent("Slider")
 		self.m_tip = self:FindChildObj(OBJPATH.tip)
 

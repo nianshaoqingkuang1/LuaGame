@@ -55,12 +55,11 @@ do
 		MsgBox(self,content,reason,MsgBoxType.MBBT_OKCANCEL,function(_,ret)
 			if ret == MsgBoxRetT.MBRT_OK then
 				self:Connect()
+			else
+				local FLoadingUI = require "ui.FLoadingUI"
+				FLoadingUI.Instance():ShowPanel(true)
 			end
 		end)
-
-		local FLoadingUI = require "ui.FLoadingUI"
-		FLoadingUI.Instance():ShowPanel(true)
-		--theGame.Instance():EnterGameLogic()
 	end
 end
 
