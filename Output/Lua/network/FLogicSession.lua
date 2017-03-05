@@ -19,10 +19,8 @@ do
 	end
 
 	function FLogicSession:ConnectTo(ip,port,name,passwd)
-		self.m_ip = ip
-		self.m_port = port
 		self.m_UserInfo = {name=name,passwd=passwd,}
-		self:Connect()
+		FNetwork.ConnectTo(self,ip,port)
 	end
 
 	function FLogicSession:OnConnected()

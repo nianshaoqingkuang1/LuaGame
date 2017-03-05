@@ -103,7 +103,9 @@ do
 		self.m_isGameLogic = true
 		--加载世界
 		AsyncLoad("Map","x1",function(asset)
-			Instantiate(asset)
+			local goMap = Instantiate(asset)
+			goMap.transform.localPosition = Vector3(-121.6,-44.2,-241.3)
+			goMap.transform.localScale = Vector3(1, 1, 1)
 
 			local player = require "player.FHostPlayer"
 			local p = player.new()
