@@ -20,13 +20,13 @@ do
 
 	function FNetwork:Connect()
 		if self:isConnected() then
-			warn("Already Connected, Can not link again.")
+			warn(self.m_netName ..".Connect: Already Connected, Can not link again.")
 			return
 		elseif self.m_status == "connecting" then
-			warn("Now is connecting, please waiting.")
+			warn(self.m_netName .. ".Connect: Now is connecting, please waiting.")
 			return
 		end
-		warn("Connect To " .. self.m_ip .. ":" .. self.m_port )
+		warn(self.m_netName .. ".Connect To " .. self.m_ip .. ":" .. self.m_port )
 		self.m_status = "connecting"
 		self.m_Network:ConnectTo(self.m_ip,self.m_port)
 	end
@@ -84,12 +84,12 @@ do
 	end
 
 	function FNetwork:OnConnected()
-		warn("FNetwork:OnConnected")
+		warn(self.m_netName .. ".OnConnected")
 		self.m_status = "connected"
 	end
 
 	function FNetwork:OnTimeout()
-		warn("FNetwork:OnTimeout")
+		warn(self.m_netName .. ".OnTimeout")
 		self.m_status = "broken"
 		local content = StringReader.Get(3)
 		MsgBox(self,content,"timeout",MsgBoxType.MBBT_OKCANCEL,function(_,ret)
@@ -100,7 +100,7 @@ do
 	end
 
 	function FNetwork:OnDisconnect(reason, err_msg)
-		warn("FNetwork:OnDisconnect reason="..reason .. ",err_msg="..err_msg)
+		warn(self.m_netName .. ".OnDisconnect reason="..reason .. ",err_msg="..err_msg)
 		self.m_status = reason
 	end
 
@@ -110,7 +110,7 @@ do
 	end
 
 	function FNetwork:OnReceiveMessage(protocal,buffer)
-		warn("FNetwork:OnReceiveMessage", protocal, buffer)
+		warn(self.m_netName .. ".OnReceiveMessage", protocal, buffer)
 		local Protocal = FGame.Manager.Protocal
 		if protocal == Protocal.Connect then
 			self:OnConnected()
