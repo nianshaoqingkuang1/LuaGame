@@ -76,7 +76,7 @@ do
 		--测试背景音
 		AsyncLoad(ResPathReader.BackgroundMusic, ResPathReader.BackgroundMusic, function(obj)
 			if obj and not backgroundMusic.isNil then
-				--backgroundMusic:PlayBackgroundMusic(obj)
+				backgroundMusic:PlayBackgroundMusic(obj)
 			end
 		end)
 	end
@@ -97,6 +97,8 @@ do
 	end
 
 	function FGame:EnterGameLogic()
+		local FWaitingUI = require "ui.FWaitingUI"
+		FWaitingUI.Instance():DestroyPanel()
 		self:LeaveLoginState()
 		self.m_isGameLogic = true
 		--加载世界
