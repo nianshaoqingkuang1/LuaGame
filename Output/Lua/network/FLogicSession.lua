@@ -18,13 +18,6 @@ do
 		return l_instance
 	end
 
-	function FLogicSession:Connect()
-		FNetwork.Connect(self)
-		local name = self.m_UserInfo.name
-		local passwd = self.m_UserInfo.passwd
-		warn("Connect To " .. self.m_ip .. ":" .. self.m_port .. " as " .. name .. "@" .. passwd)
-	end
-
 	function FLogicSession:ConnectTo(ip,port,name,passwd)
 		self.m_ip = ip
 		self.m_port = port
@@ -66,6 +59,10 @@ do
 				self:Connect()
 			end
 		end)
+
+		local FLoadingUI = require "ui.FLoadingUI"
+		FLoadingUI.Instance():ShowPanel(true)
+		--theGame.Instance():EnterGameLogic()
 	end
 end
 
