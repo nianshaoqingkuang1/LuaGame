@@ -191,6 +191,13 @@ public class Packager {
             Directory.CreateDirectory(dst_path);
         _CreateAssetBunldesMain(dst_path);
     }
+
+	[MenuItem("Test/EnumZip")]
+	static void EnumZip()
+	{
+		string dst_res = Application.dataPath +  "/StreamingAssets/res_base/data.zip";
+		UnZipUtil.XSharpUnZip.EnumZip (dst_res,UnZipUtil.XSharpUnZip._password);
+	}
     
     static string GetLuaSrcPath()
     {

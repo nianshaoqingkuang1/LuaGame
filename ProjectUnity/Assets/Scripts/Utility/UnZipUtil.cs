@@ -120,6 +120,16 @@ namespace UnZipUtil
             }
         }
 
+		public static void EnumZip(string zipFileName, string password)
+		{
+			SharpZipLib.Zip.ZipInputStream s = new SharpZipLib.Zip.ZipInputStream(File.OpenRead(zipFileName));
+			s.Password = password;
+			SharpZipLib.Zip.ZipEntry theEntry;
+			while ((theEntry = s.GetNextEntry ()) != null) {
+				LogUtil.Log (theEntry.Name+","+theEntry.ZipFileIndex+","+theEntry.Offset);
+			}
+		}
+
         static bool FindEntry(SharpZipLib.Zip.ZipInputStream s, string entryname,out SharpZipLib.Zip.ZipEntry entry)
         {
             try

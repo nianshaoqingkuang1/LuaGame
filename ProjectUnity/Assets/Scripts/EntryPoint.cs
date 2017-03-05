@@ -8,9 +8,6 @@ using System.Collections.Generic;
 
 public class EntryPoint : PersistentSingleton<EntryPoint>
 {
-    public string AssetsRootPath;
-    public string LuaPath;
-
     public string EntryLuaScript = string.Empty;
 	public LuaSvrFlag SrvFlag = LuaSvrFlag.LSF_BASIC;
     public LogUtil.LogLevel logLevel = LogUtil.LogLevel.Info;
@@ -60,28 +57,12 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void MakePath()
     {
-        if (!string.IsNullOrEmpty(AssetsRootPath))
-        {
-            if (AssetsRootPath.StartsWith("./"))
-                AssetsRootPath = Application.dataPath + AssetsRootPath.Substring(1);
-            else if (AssetsRootPath.StartsWith("../"))
-                AssetsRootPath = Application.dataPath + "/../" + AssetsRootPath.Substring(3);
-
-            GameUtil.AssetRoot = AssetsRootPath;
-        }
-        else
-            AssetsRootPath = GameUtil.AssetRoot;
-        if (!string.IsNullOrEmpty(LuaPath))
-        {
-            if (LuaPath.StartsWith("./"))
-                LuaPath = Application.dataPath + LuaPath.Substring(1);
-            else if (LuaPath.StartsWith("../"))
-                LuaPath = Application.dataPath + "/../" + LuaPath.Substring(3);
-
-            GameUtil.LuaPath = LuaPath;
-        }
-        else
-            LuaPath = GameUtil.LuaPath;
+		//后期将把所有的文件读取替换成FileSystem管理，便于手机安装包读取数据，更新资源，pck读取呢
+		Assets.FileSystem.Instance.ResBaseDir = Application.streamingAssetsPath+"/res_base/data.zip";
+		Assets.FileSystem.Instance.AssetsDir = GameUtil.AssetRoot;
+		Assets.FileSystem.Instance.PckDir = GameUtil.SepPath;
+		Assets.FileSystem.Instance.EnablePck = SepFile;
+		Assets.FileSystem.Instance.InitAssets ("LuaGame");
     }
 
     void SetupEnvironment()
