@@ -14,6 +14,8 @@ do
 
 	function FHostPlayer:OnLoaded(obj)
 		obj.tag = "HostPlayer"
+		obj.transform.localPosition = Vector3(80.45,10.4,16.14)
+		obj.transform.localScale = Vector3(3,3,3)
 		self:Play("Idle",UnityEngine.WrapMode.Loop)
 		--theGame.m_MainCam:GetComponent("FSmootFollow").target = obj.transform
 		self.m_IsReady = true
