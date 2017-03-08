@@ -74,9 +74,12 @@ do
 		local backgroundMusic = musicGo:AddComponent(LuaHelper.GetClsType("BackgroundMusic"))
 		DontDestroyOnLoad(musicGo)
 		--测试背景音
-		AsyncLoad(ResPathReader.BackgroundMusic, ResPathReader.BackgroundMusic, function(obj)
-			if obj and not backgroundMusic.isNil then
-				backgroundMusic:PlayBackgroundMusic(obj)
+		AsyncLoad(ResPathReader.BackgroundMusic, {ResPathReader.BackgroundMusic}, function(objs)
+			if #objs == 1 then
+				local obj = objs[1]
+				if obj and not obj.isNil then
+					backgroundMusic:PlayBackgroundMusic(obj)
+				end
 			end
 		end)
 	end
@@ -103,7 +106,7 @@ do
 		self.m_isGameLogic = true
 		--加载世界
 		AsyncLoad("Map","x1",function(asset)
-			local goMap = Instantiate(asset)
+			local goMap = Instantiate(asset[1])
 			goMap.transform.localPosition = Vector3(-121.6,-44.2,-241.3)
 			goMap.transform.localScale = Vector3(1, 1, 1)
 

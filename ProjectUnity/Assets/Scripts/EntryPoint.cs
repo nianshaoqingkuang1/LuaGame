@@ -2,7 +2,7 @@
 using System.Collections;
 using SLua;
 using System.IO;
-using FGame.Manager;
+using FGame;
 using System;
 using System.Collections.Generic;
 
@@ -58,11 +58,11 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
     void MakePath()
     {
 		//后期将把所有的文件读取替换成FileSystem管理，便于手机安装包读取数据，更新资源，pck读取呢
-		Assets.FileSystem.Instance.ResBaseDir = Application.streamingAssetsPath+"/res_base/data.zip";
-		Assets.FileSystem.Instance.AssetsDir = GameUtil.AssetRoot;
-		Assets.FileSystem.Instance.PckDir = GameUtil.SepPath;
-		Assets.FileSystem.Instance.EnablePck = SepFile;
-		Assets.FileSystem.Instance.InitAssets ("LuaGame");
+		FileSystem.Instance.ResBaseDir = Application.streamingAssetsPath+"/res_base/data.zip";
+		FileSystem.Instance.AssetsDir = GameUtil.AssetRoot;
+		FileSystem.Instance.PckDir = GameUtil.SepPath;
+		FileSystem.Instance.EnablePck = SepFile;
+		FileSystem.Instance.InitAssets ("LuaGame");
     }
 
     void SetupEnvironment()
@@ -74,15 +74,6 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void SetupPath()
     {
-#if ASYNC_MODE
-        string assetBundlePath = GameUtil.AssetPath ;
-        ResourceManager.BaseDownloadingURL = GameUtil.MakePathForWWW(assetBundlePath);
-        if(SepFile) ResourceManager.PckPath = GameUtil.SepPath;
-#else
-        string assetBundlePath = GameUtil.AssetPath;
-        string baseAssetURL = GameUtil.MakePathForWWW(assetBundlePath);
-        ResourceManager.Instance.Initialize(baseAssetURL);
-#endif
         LogUtil.Log("AssetRoot:" + GameUtil.AssetRoot);
         LogUtil.Log("AssetsPath:" + GameUtil.AssetPath);
         LogUtil.Log("LuaPath:" + GameUtil.LuaPath);

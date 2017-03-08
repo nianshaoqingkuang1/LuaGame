@@ -88,8 +88,8 @@ public class Packager {
         System.Action<string> cb = (str) =>
         {
             string name = str;
-			if (!string.IsNullOrEmpty(name) && !name.EndsWith(FGame.Manager.ResourceManager.assetExt))
-				name = name + FGame.Manager.ResourceManager.assetExt;
+			if (!string.IsNullOrEmpty(name) && !name.EndsWith(".assetbundle"))
+				name = name + ".assetbundle";
 
             Object[] SelectedAsset = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
 
@@ -100,7 +100,7 @@ public class Packager {
                 string abName = sp.ToLower().Replace("\\", "/");//.Replace("assets/", "");
                
                 import = AssetImporter.GetAtPath(sp);
-				import.assetBundleName = name!=null ? name : abName + FGame.Manager.ResourceManager.assetExt;
+				import.assetBundleName = name!=null ? name : abName + ".assetbundle";
             }
             AssetDatabase.Refresh();
         };
@@ -142,9 +142,9 @@ public class Packager {
         System.Action<string> cb = (str) =>
         {
             string name = str;
-			if (!string.IsNullOrEmpty(name) && !name.EndsWith(FGame.Manager.ResourceManager.assetExt))
-				name = name + FGame.Manager.ResourceManager.assetExt;
-			name = name != null ? name : FGame.Manager.ResourceManager.assetDir + FGame.Manager.ResourceManager.assetExt;
+			if (!string.IsNullOrEmpty(name) && !name.EndsWith(".assetbundle"))
+				name = name + ".assetbundle";
+			name = name != null ? name : "StreamingAssets" + ".assetbundle";
             Object[] SelectedAsset = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
             HashSet<string> assetList = new HashSet<string>();
             //Dictionary<string, HashSet<string>> allBundles = new Dictionary<string, HashSet<string>>();

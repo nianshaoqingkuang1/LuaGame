@@ -1,9 +1,9 @@
 import "UnityEngine"
 
-ResourceManager = FGame.Manager.ResourceManager
-NetworkManager = FGame.Manager.NetworkManager
-ByteBuffer = FGame.Common.ByteBuffer
-LuaBehaviour = FGame.UI.LuaBehaviour
+ResourceManager = FGame.ResourceManager
+NetworkManager = FGame.NetworkManager
+ByteBuffer = FGame.ByteBuffer
+LuaBehaviour = FGame.LuaBehaviour
 
 GameObject = UnityEngine.GameObject
 Vector2 = UnityEngine.Vector2
@@ -55,7 +55,11 @@ end
 
 function AsyncLoad(assetBundleName,assetName,cb)
 	local FAssetBundleUtil = require "utility.FAssetBundleUtil"
-	FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,assetName,cb)
+	if type(assetName) ~= "table" then
+		FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,{assetName},cb)
+	else
+		FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,assetName,cb)
+	end
 end
 
 function UnloadAssetBundle(assetBundleName)

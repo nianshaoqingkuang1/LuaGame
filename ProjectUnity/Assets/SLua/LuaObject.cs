@@ -1324,7 +1324,8 @@ return index
 
 		public static void pushValue(IntPtr l, Array a)
 		{
-			pushObject(l, a);
+			//pushObject(l, a);
+			pushArray(l,a);
 		}
 
 		public static void pushVar(IntPtr l, object o)
@@ -1351,6 +1352,17 @@ return index
 			else
 				pushObject(l, o);
          
+		}
+
+		public static void pushArray(IntPtr l, Array a)
+		{
+			LuaDLL.lua_newtable (l);
+			int pos = 0;
+			foreach (var p in a) 
+			{
+				pushValue (l, p);
+				LuaDLL.lua_rawseti (l, -2, ++pos);
+			}
 		}
 
 

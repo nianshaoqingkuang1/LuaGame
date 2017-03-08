@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SharpZipLib = ICSharpCode.SharpZipLib;
 
-namespace Assets
+namespace FGame
 {
 	public interface AssetsReaderSystem {
 		bool ReadFile(string filename, out byte[] buffer);

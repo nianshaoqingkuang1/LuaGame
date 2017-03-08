@@ -2,8 +2,7 @@
 using System.Collections;
 using SuperSocket.ProtoBase;
 using System;
-using FGame.Common;
-using FGame.Manager;
+using FGame;
 using System.IO;
 
 namespace SuperSocket.ClientEngine

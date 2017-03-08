@@ -13,14 +13,15 @@ do
 	end
 	function FAssetBundleUtil:InitAssetBundle()
 		self.m_AssetsMgr = ResourceManager.Instance
-		self.m_AssetsMgr:TouchInstance()
+		self.m_AssetsMgr.BaseDownloadingURL = GameUtil.MakePathForWWW(Application.dataPath .. "/../../Output/StreamingAssets")
+		self.m_AssetsMgr.BundleExt = ".assetbundle"
 		DontDestroyOnLoad(self.m_AssetsMgr.gameObject)
 	end
 
 	function FAssetBundleUtil:AsyncLoad(assetBundleName,assetName,cb)
-		print("LoadAssetBundle:" .. assetBundleName .. "@" .. assetName)
-		self.m_AssetsMgr:LoadAsset(assetBundleName,assetName,function(obj)
-			if cb then cb(obj) end
+		print("LoadAssetBundle:" .. assetBundleName .. "@" .. unpack(assetName))
+		self.m_AssetsMgr:LoadAsset(assetBundleName,assetName,function(objs)
+			if cb then cb(objs) end
 		end)
 	end
 
@@ -28,11 +29,8 @@ do
 		if not assetBundleName or assetBundleName:len() == 0 then 
 			return
 		end
-		if ResourceManager.IsAsyncMode then
-			ResourceManager.UnloadAssetBundle(assetBundleName)
-		else
-			self.m_AssetsMgr:UnloadAssetBundle(assetBundleName)
-		end
+
+		self.m_AssetsMgr:UnloadAssetBundle(assetBundleName, false)
 	end
 end
 

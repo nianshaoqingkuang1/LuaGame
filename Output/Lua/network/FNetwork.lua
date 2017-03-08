@@ -14,7 +14,7 @@ do
 
 	function FNetwork:InitNetwork()
 		self.m_GoNetwork = NewGameObject(self.m_netName)
-		self.m_Network = self.m_GoNetwork:AddComponent(FGame.Manager.NetworkManager)
+		self.m_Network = self.m_GoNetwork:AddComponent(NetworkManager)
 		self.m_Network:SetMsgHandle(self)
 	end
 
@@ -111,7 +111,7 @@ do
 
 	function FNetwork:OnReceiveMessage(protocal,buffer)
 		warn(self.m_netName .. ".OnReceiveMessage", protocal, buffer)
-		local Protocal = FGame.Manager.Protocal
+		local Protocal = FGame.Protocal
 		if protocal == Protocal.Connect then
 			self:OnConnected()
 		elseif protocal == Protocal.Exception then

@@ -5,7 +5,7 @@ using System.Text;
 using System;
 using SLua;
 
-namespace FGame.Common
+namespace FGame
 {
     [CustomLuaClass]
     public class ByteBuffer {

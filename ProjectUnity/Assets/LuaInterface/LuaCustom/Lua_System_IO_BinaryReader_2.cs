@@ -22,9 +22,9 @@ public class Lua_System_IO_BinaryReader_2 : LuaObject {
                 pushValue(l, o);
                 return 2;
             }
-            else if (matchType(l, 1, typeof(FGame.Common.ByteBuffer)))
+            else if (matchType(l, 1, typeof(FGame.ByteBuffer)))
             {
-                FGame.Common.ByteBuffer a1;
+                FGame.ByteBuffer a1;
                 checkType(l, 1, out a1);
                 MemoryStream buff = new MemoryStream(a1.ToBytes());
                 o = new BinaryReader(buff);

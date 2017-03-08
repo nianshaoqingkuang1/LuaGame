@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using SLua;
-using FGame.Manager;
 using UGUIEvent;
 
-namespace FGame.UI {
+namespace FGame {
 
     [CustomLuaClass]
     public class LuaBehaviour : MonoBehaviour {

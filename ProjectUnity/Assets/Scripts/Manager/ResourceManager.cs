@@ -1,576 +1,241 @@
-﻿#if ASYNC_MODE
-using UnityEngine;
+﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using LuaInterface;
-using SLua;
-using System.IO;
-
-// Loaded assetBundle contains the references count which can be used to unload dependent assetBundles automatically.
-namespace FGame.Manager
-{
-    public class AssetBundleInfo {
-        public AssetBundle m_AssetBundle;
-        public int m_ReferencedCount;
-
-        public AssetBundleInfo(AssetBundle assetBundle) {
-            m_AssetBundle = assetBundle;
-            m_ReferencedCount = 1;
-        }
-    }
-
-    // Class takes care of loading assetBundle and its dependencies automatically, loading variants automatically.
-    [CustomLuaClass]
-    public class ResourceManager : MonoBehaviour {
-		public static string assetDir = "StreamingAssets";
-		public static string assetExt = ".assetbundle";
-
-        private static ResourceManager _instance = null;
-        public static ResourceManager Instance
-        {
-            get
-            {
-                if (null == _instance)
-                {
-                    GameObject go = new GameObject("ResourceManager");
-                    _instance = go.AddComponent<ResourceManager>();
-                }
-                return _instance;
-            }
-        }
-        public void TouchInstance()
-        { }
-
-        static string m_BaseDownloadingURL = "";
-        static string m_PckPath = null;
-        static string[] m_Variants = { };
-        static AssetBundleManifest m_AssetBundleManifest = null;
-
-        static Dictionary<string, AssetBundleInfo> m_LoadedAssetBundles = new Dictionary<string, AssetBundleInfo>();
-        static Dictionary<string, WWW> m_DownloadingWWWs = new Dictionary<string, WWW>();
-        static Dictionary<string, string> m_DownloadingErrors = new Dictionary<string, string>();
-        static List<AssetBundleOperation> m_InProgressOperations = new List<AssetBundleOperation>();
-        static Dictionary<string, string[]> m_Dependencies = new Dictionary<string, string[]>();
-
-        // The base downloading url which is used to generate the full downloading url with the assetBundle names.
-        public static string BaseDownloadingURL {
-            get { return m_BaseDownloadingURL; }
-            set { m_BaseDownloadingURL = value; }
-        }
-        public static string PckPath{
-            get { return m_PckPath; }
-            set { m_PckPath = value; }
-        }
-
-        // Variants which is used to define the active variants.
-        public static string[] Variants {
-            get { return m_Variants; }
-            set { m_Variants = value; }
-        }
-
-        // AssetBundleManifest object which can be used to load the dependecies and check suitable assetBundle variants.
-        public static AssetBundleManifest AssetBundleManifestObject {
-            set { m_AssetBundleManifest = value; }
-        }
-
-        /// <summary>
-        /// 载入素材
-        /// </summary>
-        public void LoadAsset(string abname, string assetname, LuaFunction func) {
-            abname = abname.ToLower();
-            StartCoroutine(OnLoadAsset(abname, assetname, func));
-        }
-
-        IEnumerator OnLoadAsset(string abname, string assetName, LuaFunction func) {
-			AssetBundleManifestOperation requestManifest = ResourceManager.Initialize(assetDir);
-            if (requestManifest != null)
-                yield return StartCoroutine(requestManifest);
-            
-            // Load asset from assetBundle.
-			string abName = abname.ToLower() + assetExt;
-            //LogUtil.Log(string.Format("LoadAssetBundle:{0}", abName));
-			AssetBundleAssetOperation request = ResourceManager.LoadAssetAsync(abName, assetName, typeof(UnityEngine.Object));
-            if (request == null) yield break;
-            yield return StartCoroutine(request);
-
-            // Get the asset.
-			UnityEngine.Object prefab = request.GetAsset<UnityEngine.Object>();
-            if (func != null) {
-                func.call(prefab);
-                func.Dispose();
-                func = null;
-            }
-        }
-
-        // Get loaded AssetBundle, only return vaild object when all the dependencies are downloaded successfully.
-        static public AssetBundleInfo GetLoadedAssetBundle(string assetBundleName, out string error) {
-            if (m_DownloadingErrors.TryGetValue(assetBundleName, out error))
-                return null;
-
-            AssetBundleInfo bundle = null;
-            m_LoadedAssetBundles.TryGetValue(assetBundleName, out bundle);
-            if (bundle == null)
-                return null;
-
-            // No dependencies are recorded, only the bundle itself is required.
-            string[] dependencies = null;
-            if (!m_Dependencies.TryGetValue(assetBundleName, out dependencies))
-                return bundle;
-
-            // Make sure all dependencies are loaded
-            foreach (var dependency in dependencies) {
-                if (m_DownloadingErrors.TryGetValue(assetBundleName, out error))
-                    return bundle;
-
-                // Wait all the dependent assetBundles being loaded.
-                AssetBundleInfo dependentBundle;
-                m_LoadedAssetBundles.TryGetValue(dependency, out dependentBundle);
-                if (dependentBundle == null)
-                    return null;
-            }
-            return bundle;
-        }
-
-        // Load AssetBundleManifest.
-        static public AssetBundleManifestOperation Initialize(string manifestAssetBundleName) {
-            LoadAssetBundle(manifestAssetBundleName, true);
-            var operation = new AssetBundleManifestOperation(manifestAssetBundleName, "AssetBundleManifest", typeof(AssetBundleManifest));
-            m_InProgressOperations.Add(operation);
-            return operation;
-        }
-
-        // Load AssetBundle and its dependencies.
-        static protected void LoadAssetBundle(string assetBundleName, bool isLoadingAssetBundleManifest = false) {
-            if (!isLoadingAssetBundleManifest)
-                assetBundleName = RemapVariantName(assetBundleName);
-
-            // Check if the assetBundle has already been processed.
-            bool isAlreadyProcessed = LoadAssetBundleInternal(assetBundleName, isLoadingAssetBundleManifest);
-
-            // Load dependencies.
-            if (!isAlreadyProcessed && !isLoadingAssetBundleManifest)
-                LoadDependencies(assetBundleName);
-        }
-
-        // Remaps the asset bundle name to the best fitting asset bundle variant.
-        static protected string RemapVariantName(string assetBundleName) {
-            string[] bundlesWithVariant = m_AssetBundleManifest.GetAllAssetBundlesWithVariant();
-
-            // If the asset bundle doesn't have variant, simply return.
-            if (System.Array.IndexOf(bundlesWithVariant, assetBundleName) < 0)
-                return assetBundleName;
-
-            string[] split = assetBundleName.Split('.');
-
-            int bestFit = int.MaxValue;
-            int bestFitIndex = -1;
-            // Loop all the assetBundles with variant to find the best fit variant assetBundle.
-            for (int i = 0; i < bundlesWithVariant.Length; i++) {
-                string[] curSplit = bundlesWithVariant[i].Split('.');
-                if (curSplit[0] != split[0])
-                    continue;
-
-                int found = System.Array.IndexOf(m_Variants, curSplit[1]);
-                if (found != -1 && found < bestFit) {
-                    bestFit = found;
-                    bestFitIndex = i;
-                }
-            }
-
-            if (bestFitIndex != -1)
-                return bundlesWithVariant[bestFitIndex];
-            else
-                return assetBundleName;
-        }
-
-        // Where we actuall call WWW to download the assetBundle.
-        static protected bool LoadAssetBundleInternal(string assetBundleName, bool isLoadingAssetBundleManifest) {
-            // Already loaded.
-            AssetBundleInfo bundle = null;
-            m_LoadedAssetBundles.TryGetValue(assetBundleName, out bundle);
-            if (bundle != null) {
-                bundle.m_ReferencedCount++;
-                return true;
-            }
-
-            // @TODO: Do we need to consider the referenced count of WWWs?
-            // In the demo, we never have duplicate WWWs as we wait LoadAssetAsync()/LoadLevelAsync() to be finished before calling another LoadAssetAsync()/LoadLevelAsync().
-            // But in the real case, users can call LoadAssetAsync()/LoadLevelAsync() several times then wait them to be finished which might have duplicate WWWs.
-            if (m_DownloadingWWWs.ContainsKey(assetBundleName))
-                return true;
-
-            WWW download = null;
-			string url = Path.Combine(m_BaseDownloadingURL, assetBundleName);
-			if(m_PckPath != null && File.Exists(Path.Combine(m_PckPath, assetDir+"/"+assetBundleName)))
-            {
-				url = GameUtil.MakePathForWWW(Path.Combine(m_PckPath, assetDir+"/"+assetBundleName));
-                LogUtil.Log("Use SepFile:" + url);
-            }
-            // For manifest assetbundle, always download it as we don't have hash for it.
-			if (isLoadingAssetBundleManifest)
-				download = new WWW (url);
-			else
-				download = WWW.LoadFromCacheOrDownload (url, 0);//m_AssetBundleManifest.GetAssetBundleHash(assetBundleName), 0);
-
-            m_DownloadingWWWs.Add(assetBundleName, download);
-
-            return false;
-        }
-
-        // Where we get all the dependencies and load them all.
-        static protected void LoadDependencies(string assetBundleName) {
-            if (m_AssetBundleManifest == null) {
-                LogUtil.LogError("Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
-                return;
-            }
-
-            // Get dependecies from the AssetBundleManifest object..
-            string[] dependencies = m_AssetBundleManifest.GetAllDependencies(assetBundleName);
-            if (dependencies.Length == 0)
-                return;
-
-            for (int i = 0; i < dependencies.Length; i++)
-                dependencies[i] = RemapVariantName(dependencies[i]);
-
-            // Record and load all dependencies.
-            m_Dependencies.Add(assetBundleName, dependencies);
-            for (int i = 0; i < dependencies.Length; i++)
-                LoadAssetBundleInternal(dependencies[i], false);
-        }
-
-        // Unload assetbundle and its dependencies.
-        static public void UnloadAssetBundle(string assetBundleName) {
-            //LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory before unloading " + assetBundleName);
-            assetBundleName = assetBundleName.ToLower();
-			if (!assetBundleName.Equals(assetDir) && !assetBundleName.EndsWith(assetExt)){
-				assetBundleName += assetExt;
-            }
-
-            UnloadAssetBundleInternal(assetBundleName);
-            UnloadDependencies(assetBundleName);
-
-            //LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory after unloading " + assetBundleName);
-        }
-
-        static protected void UnloadDependencies(string assetBundleName) {
-            string[] dependencies = null;
-            if (!m_Dependencies.TryGetValue(assetBundleName, out dependencies))
-                return;
-
-            // Loop dependencies.
-            foreach (var dependency in dependencies) {
-                UnloadAssetBundleInternal(dependency);
-            }
-
-            m_Dependencies.Remove(assetBundleName);
-        }
-
-        static protected void UnloadAssetBundleInternal(string assetBundleName) {
-            string error;
-            AssetBundleInfo bundle = GetLoadedAssetBundle(assetBundleName, out error);
-            if (bundle == null)
-                return;
-
-            if (--bundle.m_ReferencedCount == 0) {
-                bundle.m_AssetBundle.Unload(false);
-                m_LoadedAssetBundles.Remove(assetBundleName);
-                //LogUtil.Log("AssetBundle " + assetBundleName + " has been unloaded successfully");
-            }
-        }
-
-        void Update() {
-            // Collect all the finished WWWs.
-            var keysToRemove = new List<string>();
-            foreach (var keyValue in m_DownloadingWWWs) {
-                WWW download = keyValue.Value;
-
-                // If downloading fails.
-                if (download.error != null) {
-                    m_DownloadingErrors.Add(keyValue.Key, download.error);
-                    keysToRemove.Add(keyValue.Key);
-                    continue;
-                }
-
-                // If downloading succeeds.
-                if (download.isDone) {
-                    //LogUtil.Log("Downloading " + keyValue.Key + " is done at frame " + Time.frameCount);
-                    m_LoadedAssetBundles.Add(keyValue.Key, new AssetBundleInfo(download.assetBundle));
-                    keysToRemove.Add(keyValue.Key);
-                }
-            }
-
-            // Remove the finished WWWs.
-            foreach (var key in keysToRemove) {
-                WWW download = m_DownloadingWWWs[key];
-                m_DownloadingWWWs.Remove(key);
-                download.Dispose();
-            }
-
-            // Update all in progress operations
-            for (int i = 0; i < m_InProgressOperations.Count; ) {
-                if (!m_InProgressOperations[i].Update()) {
-                    m_InProgressOperations.RemoveAt(i);
-                } else i++;
-            }
-        }
-
-        // Load asset from the given assetBundle.
-        static public AssetBundleAssetOperation LoadAssetAsync(string assetBundleName, string assetName, System.Type type) {
-            AssetBundleAssetOperation operation = null;
-            LoadAssetBundle(assetBundleName);
-            operation = new AssetBundleLoadAssetOperation(assetBundleName, assetName, type);
-            m_InProgressOperations.Add(operation);  //添加进处理中列表，等Update处理
-            return operation;
-        }
-
-        void OnDestroy(){
-            List<string> assetBundles = new List<string>();
-            foreach(var item in m_LoadedAssetBundles)
-            {
-                assetBundles.Add(item.Key);
-            }
-            foreach(var assetBundleName in assetBundles)
-            {
-                AssetBundleInfo bundle;
-                if (m_LoadedAssetBundles.TryGetValue(assetBundleName,out bundle))
-                {
-                    UnloadAssetBundleInternal(assetBundleName);
-                    UnloadDependencies(assetBundleName);
-                }
-            }
-
-            if (m_AssetBundleManifest != null) m_AssetBundleManifest = null;
-			Resources.UnloadUnusedAssets ();
-            LogUtil.Log("~ResourceManager was destroy!");
-        }
-
-        static public bool IsAsyncMode {
-            get { return true; }
-        }
-    }  
-}
-#else
-
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+using UObject = UnityEngine.Object;
 using LuaInterface;
 using SLua;
 
-namespace FGame.Manager
+namespace FGame
 {
-    [CustomLuaClass]
-    public class ResourceManager : MonoBehaviour {
-		public static string assetDir = "StreamingAssets";
-		public static string assetExt = ".assetbundle";
-        private string[] m_Variants = { };
-        private AssetBundleManifest manifest;
-        private AssetBundle shared, assetbundle;
-        private Dictionary<string, AssetBundle> bundles;
-        private string AssetPath = string.Empty;
+	public class AssetBundleInfo {
+		public AssetBundle m_AssetBundle;
+		public int m_ReferencedCount;
 
-        private static ResourceManager _instance = null;
-        public static ResourceManager Instance
-        {
-            get
-            {
-                if (null == _instance)
-                {
-                    GameObject go = new GameObject("ResourceManager");
-                    _instance = go.AddComponent<ResourceManager>();
-                }
-                return _instance;
-            }
-        }
-        public void TouchInstance()
-        { }
+		public AssetBundleInfo(AssetBundle assetBundle) {
+			m_AssetBundle = assetBundle;
+			m_ReferencedCount = 0;
+		}
+	}
 
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        public void Initialize(string assetpath) {
-            AssetPath = assetpath;
-            byte[] stream = null;
-			string uri = AssetPath + assetDir;
-            bundles = new Dictionary<string, AssetBundle>();
-            if (!File.Exists(uri)) return;
-#if !UNITY_WEBPLAYER
-            stream = File.ReadAllBytes(uri);
-            assetbundle = AssetBundle.LoadFromMemory(stream);
-            manifest = assetbundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-            LogUtil.Log("AssetBundleManifest is Loaded");
-#else
-            
-#endif
-        }
+	[CustomLuaClass]
+	public class ResourceManager : MonoBehaviour
+	{
+		static ResourceManager l_instance;
+		string m_BaseDownloadingURL = "";
+		string m_ManifestName = "StreamingAssets";
+		string m_ExtName = ".assetbundle";
+		string[] m_AllManifest = null;
+		AssetBundleManifest m_AssetBundleManifest = null;
+		Dictionary<string, string[]> m_Dependencies = new Dictionary<string, string[]>();
+		Dictionary<string, AssetBundleInfo> m_LoadedAssetBundles = new Dictionary<string, AssetBundleInfo>();
+		Dictionary<string, List<LoadAssetRequest>> m_LoadRequests = new Dictionary<string, List<LoadAssetRequest>>();
 
-        /// <summary>
-        /// 载入素材
-        /// </summary>
-        public GameObject LoadAsset(string abname, string assetname) {
-            abname = abname.ToLower();
-            AssetBundle bundle = LoadAssetBundle(abname);
-            return bundle.LoadAsset<GameObject>(assetname);
-        }
+		class LoadAssetRequest {
+			public Type assetType;
+			public string[] assetNames;
+			public Action<UObject[]> onAction;
+		}
 
-        /// <summary>
-        /// 载入素材
-        /// </summary>
-        public void LoadAsset(string abname, string assetname, LuaFunction func) {
-            abname = abname.ToLower();
-            StartCoroutine(OnLoadAsset(abname, assetname, func));
-        }
+		public string BaseDownloadingURL
+		{
+			get { return m_BaseDownloadingURL; }
+			set { m_BaseDownloadingURL = value; }
+		}
 
-        IEnumerator OnLoadAsset(string abname, string assetName, LuaFunction func) {
-            yield return new WaitForEndOfFrame();
-            GameObject go = LoadAsset(abname, assetName);
-            if (func != null) func.call(go);
-        }
+		public string BundleExt
+		{
+			get { return m_ExtName; }
+			set { m_ExtName = value; }
+		}
 
-        /// <summary>
-        /// 载入AssetBundle
-        /// </summary>
-        /// <param name="abname"></param>
-        /// <returns></returns>
-        AssetBundle LoadAssetBundle(string abname) {
-			if (!abname.EndsWith(assetExt)){
-				abname += assetExt;
-            }
-            AssetBundle bundle = null;
-            if (!bundles.ContainsKey(abname)) {
-                byte[] stream = null;
-                string uri = AssetPath + abname; //debug
-                LogUtil.LogWarning("LoadFile::>> " + uri);
-                LoadDependencies(abname);
+		public string ManifestName
+		{
+			get { return m_ManifestName; }
+			set { m_ManifestName = value; }
+		}
 
-                stream = File.ReadAllBytes(uri);
-                bundle = AssetBundle.LoadFromMemory(stream); //关联数据的素材绑定
-                bundles.Add(abname, bundle);
-            } else {
-                bundles.TryGetValue(abname, out bundle);
-            }
-            return bundle;
-        }
+		public static ResourceManager Instance
+		{
+			get {
+				if (l_instance == null) {
+					l_instance = new GameObject ("ResourceManager").AddComponent<ResourceManager> ();
+				}
+				return l_instance;
+			}
+		}
 
-        /// <summary>
-        /// 载入依赖
-        /// </summary>
-        /// <param name="name"></param>
-        void LoadDependencies(string name) {
-            if (manifest == null) {
-                LogUtil.LogError("Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
-                return;
-            }
-            // Get dependecies from the AssetBundleManifest object..
-            string[] dependencies = manifest.GetAllDependencies(name);
-            if (dependencies.Length == 0) return;
+		public void LoadAsset(string abName, string[] assetNames, Action<UObject[]> action)
+		{
+			Initialize (() => {
+				LoadAsset<UObject> (abName, assetNames, action);
+			});
+		}
+			
+		// Load AssetBundleManifest.
+		void Initialize(Action onInitCallback) {
+			LoadAsset<AssetBundleManifest>(ManifestName, new string[] { "AssetBundleManifest" }, delegate(UObject[] objs) {
+				if (objs.Length > 0) {
+					m_AssetBundleManifest = objs[0] as AssetBundleManifest;
+					m_AllManifest = m_AssetBundleManifest.GetAllAssetBundles();
+				}
+				if (onInitCallback != null) onInitCallback();
+			});
+		}
 
-            for (int i = 0; i < dependencies.Length; i++)
-                dependencies[i] = RemapVariantName(dependencies[i]);
+		/// <summary>
+		/// 载入素材
+		/// </summary>
+		void LoadAsset<T>(string abName, string[] assetNames, Action<UObject[]> action = null) where T : UObject {
+			if (typeof(T) != typeof(AssetBundleManifest)) {
+				abName = abName.ToLower ();
+				abName = abName + BundleExt;
+			}
+			LoadAssetRequest request = new LoadAssetRequest();
+			request.assetType = typeof(T);
+			request.assetNames = assetNames;
+			request.onAction = action;
 
-            // Record and load all dependencies.
-            for (int i = 0; i < dependencies.Length; i++) {
-                LoadAssetBundle(dependencies[i]);
-            }
-        }
+			List<LoadAssetRequest> requests = null;
+			if (!m_LoadRequests.TryGetValue(abName, out requests)) {
+				requests = new List<LoadAssetRequest>();
+				requests.Add(request);
+				m_LoadRequests.Add(abName, requests);
+				StartCoroutine(OnLoadAsset<T>(abName));
+			} else {
+				requests.Add(request);
+			}
+		}
+			
+		IEnumerator OnLoadAsset<T>(string abName) where T : UObject {
+			AssetBundleInfo bundleInfo = GetLoadedAssetBundle(abName);
+			if (bundleInfo == null) {
+				yield return StartCoroutine(OnLoadAssetBundle(abName, typeof(T)));
 
-        // Remaps the asset bundle name to the best fitting asset bundle variant.
-        string RemapVariantName(string assetBundleName) {
-            string[] bundlesWithVariant = manifest.GetAllAssetBundlesWithVariant();
+				bundleInfo = GetLoadedAssetBundle(abName);
+				if (bundleInfo == null) {
+					m_LoadRequests.Remove(abName);
+					LogUtil.LogError("OnLoadAsset--->>>" + abName);
+					yield break;
+				}
+			}
 
-            // If the asset bundle doesn't have variant, simply return.
-            if (System.Array.IndexOf(bundlesWithVariant, assetBundleName) < 0)
-                return assetBundleName;
+			List<LoadAssetRequest> list = null;
+			if (!m_LoadRequests.TryGetValue(abName, out list)) {
+				m_LoadRequests.Remove(abName);
+				yield break;
+			}
 
-            string[] split = assetBundleName.Split('.');
+			for (int i = 0; i < list.Count; i++) {
+				string[] assetNames = list[i].assetNames;
+				List<UObject> result = new List<UObject>();
 
-            int bestFit = int.MaxValue;
-            int bestFitIndex = -1;
-            // Loop all the assetBundles with variant to find the best fit variant assetBundle.
-            for (int i = 0; i < bundlesWithVariant.Length; i++) {
-                string[] curSplit = bundlesWithVariant[i].Split('.');
-                if (curSplit[0] != split[0])
-                    continue;
+				AssetBundle ab = bundleInfo.m_AssetBundle;
+				for (int j = 0; j < assetNames.Length; j++) {
+					string assetPath = assetNames[j];
+					AssetBundleRequest request = ab.LoadAssetAsync(assetPath, list[i].assetType);
+					yield return request;
+					result.Add(request.asset);
+				}
 
-                int found = System.Array.IndexOf(m_Variants, curSplit[1]);
-                if (found != -1 && found < bestFit) {
-                    bestFit = found;
-                    bestFitIndex = i;
-                }
-            }
-            if (bestFitIndex != -1)
-                return bundlesWithVariant[bestFitIndex];
-            else
-                return assetBundleName;
-        }
-        
-        // Unload assetbundle and its dependencies.
-        public void UnloadAssetBundle(string assetBundleName) {
-            //LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory before unloading " + assetBundleName);
-            assetBundleName = assetBundleName.ToLower();
-			if(!assetBundleName.Equals(assetDir) && !assetBundleName.EndsWith(assetExt)){
-				assetBundleName += assetExt;
-            }
+				if (list[i].onAction != null) {
+					list[i].onAction(result.ToArray());
+					list[i].onAction = null;
+				}
 
-            UnloadAssetBundleInternal(assetBundleName);
-            UnloadDependencies(assetBundleName);
+				bundleInfo.m_ReferencedCount++;
+			}
+			m_LoadRequests.Remove(abName);
+		}
 
-            //LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory after unloading " + assetBundleName);
-        }
+		IEnumerator OnLoadAssetBundle(string abName, Type type) {
+			string url = m_BaseDownloadingURL + "/" + abName;
+			LogUtil.Log (string.Format ("load asset {0}", url));
+			WWW download = null;
+			if (type == typeof(AssetBundleManifest))
+				download = new WWW(url);
+			else {
+				string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);
+				if (dependencies.Length > 0) {
+					m_Dependencies.Add(abName, dependencies);
+					for (int i = 0; i < dependencies.Length; i++) {
+						string depName = dependencies[i];
+						AssetBundleInfo bundleInfo = null;
+						if (m_LoadedAssetBundles.TryGetValue(depName, out bundleInfo)) {
+							bundleInfo.m_ReferencedCount++;
+						} else if (!m_LoadRequests.ContainsKey(depName)) {
+							yield return StartCoroutine(OnLoadAssetBundle(depName, type));
+						}
+					}
+				}
+				download = WWW.LoadFromCacheOrDownload(url, m_AssetBundleManifest.GetAssetBundleHash(abName), 0);
+			}
+			yield return download;
 
-        protected void UnloadDependencies(string assetBundleName) {
-            if (manifest == null) {
-                return;
-            }
-            // Get dependecies from the AssetBundleManifest object..
-            string[] dependencies = manifest.GetAllDependencies(assetBundleName);
-            if (dependencies.Length == 0) return;
+			AssetBundle assetObj = download.assetBundle;
+			if (assetObj != null) {
+				m_LoadedAssetBundles.Add(abName, new AssetBundleInfo(assetObj));
+			}
+		}
 
-            for (int i = 0; i < dependencies.Length; i++)
-                dependencies[i] = RemapVariantName(dependencies[i]);
+		AssetBundleInfo GetLoadedAssetBundle(string abName) {
+			AssetBundleInfo bundle = null;
+			m_LoadedAssetBundles.TryGetValue(abName, out bundle);
+			if (bundle == null) return null;
 
-            // unload all dependencies.
-            for (int i = 0; i < dependencies.Length; i++) {
-                UnloadAssetBundleInternal(dependencies[i]);
-            }
-        }
+			// No dependencies are recorded, only the bundle itself is required.
+			string[] dependencies = null;
+			if (!m_Dependencies.TryGetValue(abName, out dependencies))
+				return bundle;
 
-        protected void UnloadAssetBundleInternal(string assetBundleName) {
-            AssetBundle abundle;
-            if (!bundles.TryGetValue(assetBundleName,out abundle))
-                return;
+			// Make sure all dependencies are loaded
+			foreach (var dependency in dependencies) {
+				AssetBundleInfo dependentBundle;
+				m_LoadedAssetBundles.TryGetValue(dependency, out dependentBundle);
+				if (dependentBundle == null) return null;
+			}
+			return bundle;
+		}
 
-            abundle.Unload(false);
-            bundles.Remove(assetBundleName);
-        }
+		/// <summary>
+		/// 此函数交给外部卸载专用，自己调整是否需要彻底清除AB
+		/// </summary>
+		/// <param name="abName"></param>
+		/// <param name="isThorough"></param>
+		public void UnloadAssetBundle(string abName, bool isThorough = false) {
+			LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory before unloading " + abName);
+			UnloadAssetBundleInternal(abName, isThorough);
+			UnloadDependencies(abName, isThorough);
+			LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory after unloading " + abName);
+		}
 
-        /// <summary>
-        /// 销毁资源
-        /// </summary>
-        void OnDestroy() {
-            if (shared != null) shared.Unload(true);
-            List<string> assetBundles = new List<string>();
-            foreach(var item in bundles)
-            {
-                assetBundles.Add(item.Key);
-            }
-            foreach(var assetBundleName in assetBundles)
-            {
-                AssetBundle bundle;
-                if (bundles.TryGetValue(assetBundleName,out bundle))
-                {
-                    UnloadAssetBundleInternal(assetBundleName);
-                    UnloadDependencies(assetBundleName);
-                }
-            }
-            if (manifest != null) manifest = null;
-            LogUtil.Log("~ResourceManager was destroy!");
-        }
+		void UnloadDependencies(string abName, bool isThorough) {
+			string[] dependencies = null;
+			if (!m_Dependencies.TryGetValue(abName, out dependencies))
+				return;
 
-        static public bool IsAsyncMode {
-            get { return false; }
-        }
-    }
+			// Loop dependencies.
+			foreach (var dependency in dependencies) {
+				UnloadAssetBundleInternal(dependency, isThorough);
+			}
+			m_Dependencies.Remove(abName);
+		}
+
+		void UnloadAssetBundleInternal(string abName, bool isThorough) {
+			AssetBundleInfo bundle = GetLoadedAssetBundle(abName);
+			if (bundle == null) return;
+
+			if (--bundle.m_ReferencedCount <= 0) {
+				if (m_LoadRequests.ContainsKey(abName)) {
+					return;     //如果当前AB处于Async Loading过程中，卸载会崩溃，只减去引用计数即可
+				}
+				bundle.m_AssetBundle.Unload(isThorough);
+				m_LoadedAssetBundles.Remove(abName);
+				LogUtil.Log(abName + " has been unloaded successfully");
+			}
+		}
+
+	}
+
 }
-#endif

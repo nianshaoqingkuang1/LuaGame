@@ -22,7 +22,7 @@
 
 using System;
 
-namespace FGame.Common
+namespace FGame
 {
     public class Converter {
         public static Int32 GetBigEndian(Int32 value) {

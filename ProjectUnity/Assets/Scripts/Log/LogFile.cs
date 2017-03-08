@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.IO;
 #if !SLUA_STANDALONE
 using UnityEngine;
@@ -129,3 +130,4 @@ public class LogFile {
 		return "[" + System.DateTime.Now.ToString ("yyyyMMddHHmmss") + "]";
 	}
 }
+	

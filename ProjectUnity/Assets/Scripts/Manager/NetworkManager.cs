@@ -3,9 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SLua;
-using FGame.Common;
 
-namespace FGame.Manager
+namespace FGame
 {
     [CustomLuaClass]
     public enum Protocal
