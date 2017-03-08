@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 245391636
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 36126d95fb84a17c3cb8fc4218aa555f
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c516f2a3b2b6b67ef759f6410a790acd
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Arts/Sound/background.mp3
+Dependencies: []

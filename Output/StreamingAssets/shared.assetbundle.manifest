@@ -1,0 +1,27 @@
+ManifestFileVersion: 0
+CRC: 2111166731
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: bc8b82ffb89cb9adc9eec413cc289715
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4d24bf54f46935ed9e6cf78ac481bb9d
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Arts/Images/Shared/common_input_frame.png
+- Assets/Arts/Images/Shared/common_btn_pressed.png
+- Assets/Arts/Images/Shared/ButtonDisable.png
+- Assets/Arts/Images/Shared/common_btn_hover.png
+- Assets/Arts/Images/Shared/ButtonClick.png
+- Assets/Arts/Images/Shared/common_btn_disabled.png
+- Assets/Arts/Images/Shared/SmallBaseMap.png
+- Assets/Arts/Images/Shared/simple_arrow.png
+- Assets/Arts/Images/Shared/ButtonNormal.png
+- Assets/Arts/Images/Shared/common_btn_normal.png
+Dependencies: []

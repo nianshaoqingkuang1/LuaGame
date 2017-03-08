@@ -1,0 +1,15 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SLua/LuaObject.cs">
+    <Files>
+      <File FileName="Assets/SLua/LuaObject.cs" Line="1119" Column="21" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_ResourceLoader.cs" Line="10" Column="49" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/SLua/LuaObject.cs" line="1358" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
