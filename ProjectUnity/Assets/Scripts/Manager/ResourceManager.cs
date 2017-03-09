@@ -116,7 +116,10 @@ namespace FGame
 				bundleInfo = GetLoadedAssetBundle(abName);
 				if (bundleInfo == null) {
 					m_LoadRequests.Remove(abName);
-					LogUtil.LogError("OnLoadAsset--->>>" + abName);
+					if(ManifestName == abName)
+						LogUtil.LogError("OnLoadAsset Failed --->>> " + abName);
+					else
+						LogUtil.LogWarning("OnLoadAsset Failed --->>> " + abName);
 					yield break;
 				}
 			}
@@ -153,8 +156,10 @@ namespace FGame
 			string url = m_BaseDownloadingURL + "/" + abName;
 			LogUtil.Log (string.Format ("load asset {0}", url));
 			WWW download = null;
+			//byte[] buff = null;
 			if (type == typeof(AssetBundleManifest))
 				download = new WWW(url);
+				//FileSystem.Instance.ReadAssetsFile(ManifestName+"/"+abName,out buff);
 			else {
 				string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);
 				if (dependencies.Length > 0) {
@@ -170,13 +175,28 @@ namespace FGame
 					}
 				}
 				download = WWW.LoadFromCacheOrDownload(url, m_AssetBundleManifest.GetAssetBundleHash(abName), 0);
+				//FileSystem.Instance.ReadAssetsFile(ManifestName+"/"+abName,out buff);
 			}
 			yield return download;
 
-			AssetBundle assetObj = download.assetBundle;
-			if (assetObj != null) {
-				m_LoadedAssetBundles.Add(abName, new AssetBundleInfo(assetObj));
+			if(download.isDone && download.error == null){
+				AssetBundle assetObj = download.assetBundle;
+				if (assetObj != null) {
+					m_LoadedAssetBundles.Add(abName, new AssetBundleInfo(assetObj));
+				}
 			}
+			else if(download.error != null){
+				LogUtil.LogWarning(download.error);
+			}
+
+			/*if (buff != null) {
+				AssetBundleCreateRequest req = AssetBundle.LoadFromMemoryAsync (buff);
+				yield return req;
+				AssetBundle assetObj = req.assetBundle;
+				if (assetObj != null) {
+					m_LoadedAssetBundles.Add(abName, new AssetBundleInfo(assetObj));
+				}
+			}*/
 		}
 
 		AssetBundleInfo GetLoadedAssetBundle(string abName) {
@@ -193,7 +213,10 @@ namespace FGame
 			foreach (var dependency in dependencies) {
 				AssetBundleInfo dependentBundle;
 				m_LoadedAssetBundles.TryGetValue(dependency, out dependentBundle);
-				if (dependentBundle == null) return null;
+				if (dependentBundle == null) {
+					LogUtil.LogWarning (string.Format("Load Dependency {0}@{1} is Failed.", dependency, abName));
+					//return null;
+				}
 			}
 			return bundle;
 		}

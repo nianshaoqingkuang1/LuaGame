@@ -20,13 +20,13 @@ namespace FGame
 	class ZipSystem : AssetsReaderSystem
 	{
 		bool isValid;
-		SharpZipLib.Zip.ZipInputStream zip;
+		SharpZipLib.Zip.ZipFile zip;
 
 		public ZipSystem(string zipFileName, string password = null)
 		{
 			try
 			{
-				zip = new SharpZipLib.Zip.ZipInputStream(File.OpenRead(zipFileName));
+				zip = new SharpZipLib.Zip.ZipFile(File.OpenRead(zipFileName));
 				zip.Password = password;
 				isValid = true;
 			}
@@ -62,13 +62,21 @@ namespace FGame
 					buffer = null;
 					return false;
 				}
+
+				Stream ss = zip.GetInputStream(theEntry);
+				SharpZipLib.Zip.ZipInputStream stream = new SharpZipLib.Zip.ZipInputStream(ss);
+				if(stream == null)
+				{
+					buffer = null;
+					return false;
+				}
 				using (MemoryStream mm = new MemoryStream())
 				{
 					int size = 2048;
 					byte[] data = new byte[2048];
 					while (true)
 					{
-						size = zip.Read(data, 0, data.Length);
+						size = stream.Read(data, 0, data.Length);
 						if (size > 0)
 							mm.Write(data, 0, size);
 						else
@@ -93,19 +101,8 @@ namespace FGame
 		{
 			try
 			{
-				entry = null;
-				SharpZipLib.Zip.ZipEntry theEntry;
-				zip.CloseEntry();
-				while ((theEntry = zip.GetNextEntry()) != null)
-				{
-					string name = theEntry.Name;
-					if (0 == string.Compare(name.Replace('\\', '/'), entryname.Replace('\\', '/'), false))
-					{
-						entry = theEntry;
-						return true;
-					}
-				}
-				return false;
+				entry = zip.GetEntry(entryname);
+				return entry != null;
 			}
 			catch (Exception e)
 			{

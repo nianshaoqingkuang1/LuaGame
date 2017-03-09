@@ -1,14 +1,47 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SLua/LuaObject.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Manager/ResourceManager.cs">
     <Files>
-      <File FileName="Assets/SLua/LuaObject.cs" Line="1119" Column="21" />
-      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_ResourceLoader.cs" Line="10" Column="49" />
+      <File FileName="Assets/SLua/LuaObject.cs" Line="1114" Column="5" />
+      <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="131" Column="46" />
+      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="11" Column="19" />
+      <File FileName="Assets/Scripts/Manager/BackgroundMusic.cs" Line="20" Column="3" />
+      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="7" Column="1" />
+      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="8" Column="16" />
+      <File FileName="Assets/Scripts/Common/Converter.cs" Line="25" Column="12" />
+      <File FileName="Assets/Scripts/Manager/SoundManager.cs" Line="7" Column="26" />
+      <File FileName="Assets/Scripts/Logic/FDelayCall.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Logic/LuaScriptFile.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Logic/FSmootFollow.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Logic/FHotKeyLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Logic/FGameLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Log/LogFile.cs" Line="8" Column="9" />
+      <File FileName="Assets/Scripts/Log/LogUtil.cs" Line="23" Column="40" />
+      <File FileName="Assets/Scripts/FileSystem/FileSystem.cs" Line="20" Column="6" />
+      <File FileName="Assets/Scripts/Logic/Fps/FPS.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UI/LuaBehaviour.cs" Line="7" Column="12" />
+      <File FileName="Assets/Scripts/UI/EventTriggerListener.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UI/BoxColliderCheck.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Utility/PersistentHumbleSingleton.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Utility/PersistentSingleton.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Utility/UnZipUtil.cs" Line="4" Column="45" />
+      <File FileName="Assets/Scripts/EntryPoint.cs" Line="76" Column="6" />
+      <File FileName="Assets/UIShareCode/Utility/ActiveTogether.cs" Line="1" Column="1" />
+      <File FileName="Assets/3rd/SuperSocket/FSuperSocket.cs" Line="29" Column="14" />
+      <File FileName="Assets/LuaInterface/LuaCustom/Lua_FGame_NetworkManager_2.cs" Line="34" Column="1" />
+      <File FileName="Assets/LuaInterface/LuaCustom/Lua_FGame_ByteBuffer_2.cs" Line="8" Column="23" />
+      <File FileName="Assets/LuaInterface/LuaCustom/Lua_System_IO_BinaryReader_2.cs" Line="27" Column="22" />
+      <File FileName="Assets/LuaInterface/LuaCustom/Lua_System_IO_BinaryWriter_2.cs" Line="1" Column="1" />
+      <File FileName="Assets/Editor/ResPackager.cs" Line="147" Column="67" />
+      <File FileName="Assets/Editor/CustomExport.cs" Line="52" Column="31" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" Line="1" Column="1" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ResourceManager.cs" Line="33" Column="26" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/SLua/LuaObject.cs" line="1358" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/Scripts/Manager/ResourceManager.cs" line="134" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
