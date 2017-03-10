@@ -11,8 +11,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
     public string EntryLuaScript = string.Empty;
 	public LuaSvrFlag SrvFlag = LuaSvrFlag.LSF_BASIC;
     public LogUtil.LogLevel logLevel = LogUtil.LogLevel.Info;
-    public Boolean SepFile = true;
-
+ 
     private LuaSvr lua = null;
 
     IEnumerator onReStart(Action cb)
@@ -49,20 +48,9 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void RunApp()
     {
-        MakePath();
+		SetupPath();
         SetupEnvironment();
-        SetupPath();
         SetupLua();
-    }
-
-    void MakePath()
-    {
-		//后期将把所有的文件读取替换成FileSystem管理，便于手机安装包读取数据，更新资源，pck读取呢
-		FileSystem.Instance.ResBaseDir = Application.streamingAssetsPath+"/res_base/data.zip";
-		FileSystem.Instance.AssetsDir = GameUtil.AssetRoot;
-		FileSystem.Instance.PckDir = GameUtil.SepPath;
-		FileSystem.Instance.EnablePck = SepFile;
-		FileSystem.Instance.InitAssets ("LuaGame");
     }
 
     void SetupEnvironment()
@@ -74,6 +62,8 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void SetupPath()
     {
+		LogUtil.Log("dataPath:" + Application.dataPath);
+		LogUtil.Log("resBasePath:" + GameUtil.BaseStreamAssetPath);
         LogUtil.Log("AssetRoot:" + GameUtil.AssetRoot);
         LogUtil.Log("AssetsPath:" + GameUtil.AssetPath);
         LogUtil.Log("LuaPath:" + GameUtil.LuaPath);
@@ -89,97 +79,10 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
         {
             if (string.IsNullOrEmpty(EntryLuaScript))
                 return;
-#if !UNITY_EDITOR || USE_ZIPASSETS
-            string entryFile = GameUtil.MakePathForLua(EntryLuaScript);
-            if(!Directory.Exists(GameUtil.AssetPath) || !File.Exists(entryFile))
-            {
-                StartCoroutine(_LoadStreamingAssets());
-            }
-            else
-#endif
-            {
-                lua.start(EntryLuaScript);
-            }
+			lua.start(EntryLuaScript);
         }, SrvFlag);        
     }
-
-    IEnumerator _LoadStreamingAssets()
-    {
-		string sourceFileName = "res_base/data.zip";
-        string filename = GameUtil.AssetRoot + "/" + sourceFileName;
-
-        byte[] bytes = null;
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || USE_ZIPASSETS
-        string sourcepath = GameUtil.MakePathForWWW(Application.streamingAssetsPath + "/" + sourceFileName);
-        LogUtil.Log("UNITY_STANDLONE: load asset from " + sourcepath);
-        WWW www = new WWW(sourcepath);
-        yield return www;
-        if (www.error != null)
-        {
-            LogUtil.LogWarning(string.Format("Error _LoadStreamingAssets.Reason:{0}",www.error));
-            yield break;
-        }
-        bytes = www.bytes;
-#elif UNITY_IPHONE
-		string sourcepath = Application.dataPath + "/Raw/" + sourceFileName;
-        LogUtil.Log("UNITY_IPHONE: load asset from " + sourcepath);
-		try{ 
-			using ( FileStream fs = new FileStream(sourcepath, FileMode.Open, FileAccess.Read, FileShare.Read) )
-            { 
-				bytes = new byte[fs.Length]; 
-				fs.Read(bytes,0,(int)fs.Length); 
-			}   
-		} 
-        catch (System.Exception e)
-        { 
-            LogUtil.LogWarning(string.Format("Failed _LoadStreamingAssets.Reason:{0}",e.Message));
-		} 
-#elif UNITY_ANDROID
-		string sourcepath = "jar:file://" + Application.dataPath + "!/assets/"+sourceFileName; 			
-		LogUtil.Log("UNITY_ANDROID: load asset from " + sourcepath); 
-		WWW www = new WWW(sourcepath); 
-        yield return www;
-        if (www.error != null)
-        {           
-            LogUtil.LogWarning(string.Format("Error _LoadStreamingAssets.Reason:{0}",www.error));
-            yield break;
-        }
-		bytes = www.bytes; 
-#endif
-
-        if (bytes != null)
-        {
-            GameUtil.CreateDirectoryForFile(filename);
-            // copy zip  file into cache folder 
-            using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
-            {
-                fs.Write(bytes, 0, bytes.Length);
-                fs.Close();
-                LogUtil.Log("Copy res form streaminAssets to persistentDataPath: " + filename);
-            }
-            yield return new WaitForEndOfFrame();
-
-            //解压缩
-			if (!UnZipUtil.XSharpUnZip.UnZipDirectory (filename, GameUtil.AssetRoot, UnZipUtil.XSharpUnZip._password)) {
-				LogUtil.LogError ("Failed to unzip streamingAssets.");
-				yield break;
-			}
-            LogUtil.Log(string.Format("Unpack {0} to {1}", sourceFileName, GameUtil.AssetRoot ));
-
-            yield return new WaitForEndOfFrame();
-
-            //删除临时zip包
-            File.Delete(filename);
-
-            yield return new WaitForEndOfFrame();
-
-            LogUtil.Log(string.Format("Load StreamAssets Finished!"));
-
-            //加载入口文件
-            lua.start(EntryLuaScript);
-        }
-    }
-
+		
     byte[] loadLuaFile(string f)
     {
         string luafilepath = GameUtil.MakePathForLua(f);

@@ -63,13 +63,7 @@ namespace FGame
 					return false;
 				}
 
-				Stream ss = zip.GetInputStream(theEntry);
-				SharpZipLib.Zip.ZipInputStream stream = new SharpZipLib.Zip.ZipInputStream(ss);
-				if(stream == null)
-				{
-					buffer = null;
-					return false;
-				}
+				Stream stream = zip.GetInputStream(theEntry);
 				using (MemoryStream mm = new MemoryStream())
 				{
 					int size = 2048;

@@ -64,9 +64,9 @@ do
 			self.m_panelName = getPanelNameFromResName(assetName)
 			self.m_loading = true
 			FGUIMan.Instance():RegisterPanel(assetName,self)
-			AsyncLoad(assetName,{assetName},function(objs)
-				if #objs == 1 then
-					self.m_panel = Instantiate(objs[1])
+			AsyncLoad(assetName,assetName,function(obj)
+				if obj then
+					self.m_panel = Instantiate(obj)
 					self.m_panel.name = self.m_panelName
 					self:_Create()
 				else

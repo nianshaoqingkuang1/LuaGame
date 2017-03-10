@@ -54,12 +54,21 @@ function OnHotKeyInput( key, down )
 end
 
 function AsyncLoad(assetBundleName,assetName,cb)
-	local FAssetBundleUtil = require "utility.FAssetBundleUtil"
-	if type(assetName) ~= "table" then
-		FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,{assetName},cb)
-	else
-		FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,assetName,cb)
+	if type(assetName) ~= "string" then
+		error(("argument #%d expected string, but got %s"):format(2, type(assetName)))
 	end
+	local FAssetBundleUtil = require "utility.FAssetBundleUtil"
+	FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,{assetName},function(objs)
+		cb(objs[1])
+	end)
+end
+
+function AsyncLoadArray(assetBundleName, assetNames, cb)
+	if type(assetName) ~= "table" then
+		error(("argument #%d expected table, but got %s"):format(2, type(assetName)))
+	end
+	local FAssetBundleUtil = require "utility.FAssetBundleUtil"
+	FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,assetNames,cb)
 end
 
 function UnloadAssetBundle(assetBundleName)

@@ -13,7 +13,10 @@ do
 	end
 	function FAssetBundleUtil:InitAssetBundle()
 		self.m_AssetsMgr = ResourceManager.Instance
-		self.m_AssetsMgr.BaseDownloadingURL = GameUtil.MakePathForWWW(Application.dataPath .. "/../../Output/StreamingAssets")
+		self.m_AssetsMgr.EnableSepFile = GameUtil.CanSepAssets
+		self.m_AssetsMgr.SepDownloadURL = GameUtil.SepPath .. "/StreamingAssets"
+		self.m_AssetsMgr.UpdateDownloadURL = GameUtil.AssetRoot .. "/StreamingAssets"
+		self.m_AssetsMgr.BaseDownloadingURL = GameUtil.BaseStreamAssetPath .. "/res_base/StreamingAssets"
 		self.m_AssetsMgr.BundleExt = ".assetbundle"
 		DontDestroyOnLoad(self.m_AssetsMgr.gameObject)
 	end

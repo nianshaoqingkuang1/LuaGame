@@ -24,6 +24,9 @@ namespace FGame
 	{
 		static ResourceManager l_instance;
 		string m_BaseDownloadingURL = "";
+		string m_UpdateDownloadURL = "";
+		string m_SepDownloadURL = "";
+		bool   m_EnableSepFile = true;
 		string m_ManifestName = "StreamingAssets";
 		string m_ExtName = ".assetbundle";
 		string[] m_AllManifest = null;
@@ -42,6 +45,24 @@ namespace FGame
 		{
 			get { return m_BaseDownloadingURL; }
 			set { m_BaseDownloadingURL = value; }
+		}
+
+		public string UpdateDownloadURL
+		{
+			get { return m_UpdateDownloadURL; }
+			set { m_UpdateDownloadURL = value; }
+		}
+
+		public string SepDownloadURL
+		{
+			get { return m_SepDownloadURL; }
+			set { m_SepDownloadURL = value; }
+		}
+
+		public bool EnableSepFile
+		{
+			get { return m_EnableSepFile; }
+			set { m_EnableSepFile = value; }
 		}
 
 		public string BundleExt
@@ -153,13 +174,18 @@ namespace FGame
 		}
 
 		IEnumerator OnLoadAssetBundle(string abName, Type type) {
-			string url = m_BaseDownloadingURL + "/" + abName;
+			string url;
+			if(EnableSepFile && File.Exists(GameUtil.MakePathFromWWW(SepDownloadURL) + "/" + abName))
+				url = GameUtil.MakePathForWWW(SepDownloadURL) + "/" + abName;
+			else if(File.Exists(GameUtil.MakePathFromWWW(UpdateDownloadURL + "/" + abName)))
+				url = GameUtil.MakePathForWWW(UpdateDownloadURL) + "/" + abName;
+			else
+				url = GameUtil.MakePathForWWW(BaseDownloadingURL) + "/" + abName;
 			LogUtil.Log (string.Format ("load asset {0}", url));
 			WWW download = null;
-			//byte[] buff = null;
+			byte[] buff = null;
 			if (type == typeof(AssetBundleManifest))
 				download = new WWW(url);
-				//FileSystem.Instance.ReadAssetsFile(ManifestName+"/"+abName,out buff);
 			else {
 				string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);
 				if (dependencies.Length > 0) {
@@ -175,7 +201,6 @@ namespace FGame
 					}
 				}
 				download = WWW.LoadFromCacheOrDownload(url, m_AssetBundleManifest.GetAssetBundleHash(abName), 0);
-				//FileSystem.Instance.ReadAssetsFile(ManifestName+"/"+abName,out buff);
 			}
 			yield return download;
 
@@ -188,15 +213,6 @@ namespace FGame
 			else if(download.error != null){
 				LogUtil.LogWarning(download.error);
 			}
-
-			/*if (buff != null) {
-				AssetBundleCreateRequest req = AssetBundle.LoadFromMemoryAsync (buff);
-				yield return req;
-				AssetBundle assetObj = req.assetBundle;
-				if (assetObj != null) {
-					m_LoadedAssetBundles.Add(abName, new AssetBundleInfo(assetObj));
-				}
-			}*/
 		}
 
 		AssetBundleInfo GetLoadedAssetBundle(string abName) {

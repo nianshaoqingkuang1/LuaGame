@@ -13,6 +13,11 @@ using UnityEngine;
 [CustomLuaClass]
 public class GameUtil
 {
+	const string STREAMASSET_DIR = "StreamingAssets";
+	const string LUA_DIR = "Lua";
+	const string SEP_PCK_DIR = "pck";
+	const string CACHE_DIR = "Cache";
+
     public static string MakePathForWWW(string path)
     {
         if (path.IndexOf("://") == -1)
@@ -53,37 +58,21 @@ public class GameUtil
         }
         name = name.Replace('.', '/');
         name += ".lua";
-
-        if(EntryPoint.Instance.SepFile && Directory.Exists(GameUtil.SetLuaPath))
-        {
-            if(File.Exists(Path.Combine(GameUtil.SetLuaPath, name)))
-                return Path.Combine(GameUtil.SetLuaPath, name);
-        }
-        
-		return Path.Combine(LuaPath, name);
+		//如果资源分离文件存在，则使用该文件
+		if (CanSepAssets && Directory.Exists (SepLuaPath)) {
+			if (File.Exists (Path.Combine (SepLuaPath, name)))
+				return Path.Combine (SepLuaPath, name);
+		} 
+		//如果更新文件存在
+		else {
+			if(File.Exists(Path.Combine(LuaPath, name)))
+				return Path.Combine(LuaPath, name);
+		}
+        //从resbase中读取
+		return Path.Combine(BaseStreamAssetPath+"/res_base/" + LUA_DIR, name);
     }
 
-    public static string GetPlatformFolderForAssetBundles()
-    {
-#if UNITY_IOS
-			return "iOS";
-#elif UNITY_ANDROID
-        return "Android";
-#elif UNITY_WEBPLAYER
-            return "WebPlayer";
-#elif UNITY_WP8
-			return "WP8Player";
-#elif UNITY_METRO
-            return "MetroPlayer";
-#elif UNITY_OSX || UNITY_STANDALONE_OSX
-		return "OSX";
-#elif UNITY_STANDALONE_WIN
-        return "Windows";
-#else
-        return "";
-#endif
-    }
-
+	//资源主目录
     private static string assetRoot;
     public static string AssetRoot
     {
@@ -109,7 +98,7 @@ public class GameUtil
     {
         get
         {
-			return Path.Combine(AssetRoot,"StreamingAssets");
+			return AssetRoot + "/" + STREAMASSET_DIR;
         }
     }
 	//Lua路径
@@ -120,47 +109,69 @@ public class GameUtil
         {
             if (!string.IsNullOrEmpty(luaPath))
                 return luaPath;
-			return Path.Combine(AssetRoot, "Lua");
+			return AssetRoot + "/" + LUA_DIR;
         }
         set
         {
             luaPath = value;
         }
     }
+	//资源分离相关
+	private static bool canSepAssets;
+	public static bool CanSepAssets
+	{
+		get { return canSepAssets; }
+		set { canSepAssets = value; }
+	}
+	
     //分离目录
     public static string SepPath 
     {
         get {
 #if UNITY_EDITOR
-            return Application.dataPath + "/../../pck";
+			return Application.dataPath + "/../../" + SEP_PCK_DIR;
 #elif UNITY_ANDROID
-            return Application.persistentDataPath + "/pck";
+			return Application.persistentDataPath + "/" + SEP_PCK_DIR;
 #else
-            return Application.temporaryCachePath + "/pck";
+			return Application.temporaryCachePath + "/" + SEP_PCK_DIR;
 #endif
         }
     }
 
-    public static string SetAssetPath
+    public static string SepAssetPath
     {
-        get { return SepPath+"/StreamingAssets"; }
+		get { return SepPath + "/" + STREAMASSET_DIR; }
     }
-    public static string SetLuaPath
+    public static string SepLuaPath
     {
-        get { return SepPath+"/Lua"; }
+		get { return SepPath + "/" + LUA_DIR; }
     }
-
+	//缓存相关
     public static string CachePath
     {
         get
         {
 #if UNITY_EDITOR && !USE_ZIPASSETS
-			return Application.dataPath+ "/../Cache";
+			return Application.dataPath+ "/../" + CACHE_DIR;
 #else
 			return Application.temporaryCachePath;
 #endif
         }
     }
+
+	public static string BaseStreamAssetPath
+	{
+		get
+		{
+#if UNITY_ANDROID
+			return "jar:file://" + Application.dataPath + "!/assets";
+#elif UNITY_IPHONE
+			return Application.dataPath + "/Raw";
+#else
+			return Application.streamingAssetsPath;
+#endif
+		}
+	}
 
     //资源分离文件是否存在
     public static bool IsSepFileExist(string f, out string filename)

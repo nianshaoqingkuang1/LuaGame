@@ -15,17 +15,17 @@ do
 	end
 
 	function FModel:Load(abname,resname,cb)
-		local function loaded(objs)
+		local function loaded(obj)
 			if self.m_status == ModelStatus.DESTROY then
 				return
 			end
-			if not objs[1] then 
+			if not obj then 
 				cb(false)
 				return 
 			end
-			local m = Instantiate(objs[1])
+			local m = Instantiate(obj)
 			self.m_model = m		
-			self.m_asset = objs[1]
+			self.m_asset = obj
 			self.m_ani = m:GetComponent("Animation")
 			self.m_status = ModelStatus.NORMAL
 			self.m_visible = true
