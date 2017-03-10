@@ -50,7 +50,7 @@ do
 	    local camobj = NewGameObject("Main Camera")
 	    camobj.transform:SetParent(cam_root.transform)
 	    camobj.transform.localPosition = Vector3(85, 18, 20);
-	    camobj.transform.localRotation = Quaternion.New(0.1, -0.9, 0.4, 0.2);
+	    camobj.transform.localRotation = Quaternion(0.1, -0.9, 0.4, 0.2);
 	    camobj.transform.localScale = Vector3(1, 1, 1);
 	    camobj:AddComponent(LuaHelper.GetClsType("FSmootFollow"))
 	    camobj:AddComponent(UnityEngine.Camera)
