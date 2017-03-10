@@ -41,7 +41,7 @@ public class GameUtil
 			return path.Substring(head.Length,path.Length-head.Length);
 #else
 			string head = "file://";
-			return path.Substring(head.Length,path.Length-head.Length).
+			return path.Substring(head.Length,path.Length-head.Length);
 #endif
 		}
 		else

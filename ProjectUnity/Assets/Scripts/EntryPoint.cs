@@ -48,8 +48,8 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void RunApp()
     {
-		SetupPath();
         SetupEnvironment();
+		SetupPath();
         SetupLua();
     }
 
