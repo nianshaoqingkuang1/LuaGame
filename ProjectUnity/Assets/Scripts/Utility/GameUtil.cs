@@ -332,7 +332,8 @@ public class GameUtil
             cb(false, www.error);
         }
     }
-
+	
+	//异步读取文件，比如Android包文件
     public static void AnsyOpenFile(string filePath, LuaFunction cb)
     {
         string filename = MakePathForWWW(filePath);
@@ -342,11 +343,55 @@ public class GameUtil
             cb.Dispose();
         }));
     }
+		
+	public static bool IsAssetFileExists(string filePath)
+	{
+#if UNITY_ANDROID
+        if (filePath.IndexOf("://") != -1)
+        {
+            //调用android接口
+            return false;
+        }
+        else
+#endif
+        {
+            string path = GameUtil.MakePathFromWWW(filePath);
+            return File.Exists(path);
+        }
+	}
 
-    //�첽HTTP
+    public static byte[] ReadAssetFile(string filePath)
+    {
+#if UNITY_ANDROID
+        if (filePath.IndexOf("://") != -1)
+        {
+            //调用android接口
+            return null;
+        }
+        else
+#endif
+        {
+            string path = GameUtil.MakePathFromWWW(filePath);
+            if(File.Exists(path))
+            {
+                FileStream fs = File.Open(path, FileMode.Open);
+                long length = fs.Length;
+                byte[] bytes = new byte[length];
+                fs.Read(bytes, 0, bytes.Length);
+                fs.Close();
+
+                return bytes;
+            }
+            else
+                return null;
+        }
+    }
+
+	
+
+    //发送HTTP请求
     public static void SendRequest(string url, string data,double t,bool bGet, LuaFunction completeHandler)
     {
-        //����webҳ���Ǿ�̬�������ݣ�����HTTPMethods.Get
         var request = new HTTPRequest(new Uri(url), bGet ? HTTPMethods.Get : HTTPMethods.Post, (req, resp) =>
         {
             if (completeHandler != null)
@@ -360,7 +405,7 @@ public class GameUtil
         request.Send();
     }
 
-    //�첽���أ�����  complete_param �����ɻص���ִ�в���
+    //下载HTTP文件
     public static void DownLoad(string SrcFilePath, string SaveFilePath, bool bGet, bool keepAlive,object complete_param, LuaFunction progressHander, LuaFunction completeHander)
     {
         

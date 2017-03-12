@@ -23,7 +23,7 @@ do
 	    goRoot.transform.localPosition = Vector3(0, 0, 0);
 	    goRoot.transform.localScale = Vector3(1, 1, 1);
 	    goRoot.layer = UnityEngine.LayerMask.NameToLayer("UI");
-
+		DontDestroyOnLoad(goRoot)
 	    local cam = goRoot:AddComponent(UnityEngine.Camera)
 	    cam.clearFlags = UnityEngine.CameraClearFlags.Depth
 	    --cam.backgroundColor = Color(128,128,128,255)

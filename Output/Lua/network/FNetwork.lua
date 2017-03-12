@@ -16,6 +16,7 @@ do
 		self.m_GoNetwork = NewGameObject(self.m_netName)
 		self.m_Network = self.m_GoNetwork:AddComponent(NetworkManager)
 		self.m_Network:SetMsgHandle(self)
+		DontDestroyOnLoad(self.m_GoNetwork)
 	end
 
 	function FNetwork:Connect()
@@ -57,8 +58,8 @@ do
 		self.m_Network:Ping(ip)
 	end
 
-	function FNetwork:Send(buffer)
-		return self.m_Network:SendMessage(buffer)
+	function FNetwork:Send(bytes)
+		return self.m_Network:SendMessage(bytes)
 	end
 
 	function FNetwork:SendPB(pb_msg)

@@ -33,7 +33,7 @@ do
 			return
 		end
 
-		self.m_AssetsMgr:UnloadAssetBundle(assetBundleName, false)
+		self.m_AssetsMgr:UnloadAssetBundle(assetBundleName, true)
 	end
 end
 

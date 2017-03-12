@@ -1,21 +1,18 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Utility/GameUtil.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs">
     <Files>
-      <File FileName="Assets/Scripts/EntryPoint.cs" Line="76" Column="32" />
-      <File FileName="Assets/Editor/AssetExport.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaObject.cs" Line="1" Column="1" />
-      <File FileName="Assets/Editor/LuaCodeGen.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/FileSystem/FileSystem.cs" Line="70" Column="20" />
-      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="44" Column="63" />
-      <File FileName="Assets/SLua/LuaState.cs" Line="1027" Column="6" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_NetworkManager.cs" Line="52" Column="1" />
+      <File FileName="Assets/SLua/LuaObject.cs" Line="1333" Column="1" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" Line="252" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/Scripts/FileSystem/FileSystem.cs" line="66" column="35" />
-      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/Scripts/FileSystem/FileSystem.cs" line="67" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="250" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="253" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_NetworkManager.cs" line="52" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="263" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

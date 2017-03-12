@@ -147,20 +147,22 @@ public class AssetExport
 		ExportAssets (dst_path);
 	}
 
-	[MenuItem("ExportAssets/步骤2.打包所有资源(Lua源码)", false, 12)]
+	[MenuItem("ExportAssets/步骤2.打包所有资源(使用Lua源码)", false, 12)]
 	public static void NoZipPackUnityResNoCompileLua()
 	{
 		string dst_res = Application.dataPath +  "/StreamingAssets/res_base";
 
 		string src_res = Application.dataPath + "/../../Output";
 
-		CopyDirectorys (src_res, dst_res);
+		CopyDirectorys (src_res+"/Configs", dst_res+"/Configs");
+		CopyDirectorys (src_res+"/Lua", dst_res+"/Lua");
+		CopyDirectorys (src_res+"/StreamingAssets", dst_res+"/StreamingAssets");
 
 		UnityLog.Log("Zip包自作完成,path=" + dst_res);
 		AssetDatabase.Refresh();
 	}
 
-	[MenuItem("ExportAssets/步骤2.打包所有资源(luac编译)", false, 13)]
+	[MenuItem("ExportAssets/步骤2.打包所有资源(使用luac编译)", false, 13)]
 	public static void NoZipPackUnityResCompileLua()
 	{
 		string dst_res = Application.dataPath +  "/StreamingAssets/res_base";
@@ -169,7 +171,7 @@ public class AssetExport
 
 		string temp_dir = Application.dataPath + "/../../Output/temp";
 
-		CopyDirectorys (src_res+"/Config", temp_dir+"/Config");
+		CopyDirectorys (src_res+"/Configs", temp_dir+"/Configs");
 		CopyDirectorys (src_res+"/StreamingAssets", temp_dir+"/StreamingAssets");
 
 		if (!CompileLuaScripts (src_res + "/Lua", temp_dir + "/Lua", false)) {
@@ -186,7 +188,7 @@ public class AssetExport
 		AssetDatabase.Refresh();
 	}
 
-	[MenuItem("ExportAssets/步骤2.打包所有资源(luajit编译)", false, 14)]
+	[MenuItem("ExportAssets/步骤2.打包所有资源(使用luajit编译)", false, 14)]
 	public static void NoZipPackUnityResCompileLuaWithJit()
 	{
 		string dst_res = Application.dataPath +  "/StreamingAssets/res_base";
@@ -195,7 +197,7 @@ public class AssetExport
 
 		string temp_dir = Application.dataPath + "/../../Output/temp";
 
-		CopyDirectorys (src_res+"/Config", temp_dir+"/Config");
+		CopyDirectorys (src_res+"/Configs", temp_dir+"/Configs");
 		CopyDirectorys (src_res+"/StreamingAssets", temp_dir+"/StreamingAssets");
 
 		if (!CompileLuaScripts (src_res + "/Lua", temp_dir + "/Lua", true)) {
@@ -211,7 +213,7 @@ public class AssetExport
 		UnityLog.Log("Zip包自作完成,path=" + dst_res);
 		AssetDatabase.Refresh();
 	}
-		
+	/*	
 	[MenuItem("ExportAssets/步骤2.打成一个Zip包(Lua源码)", false, 15)]
 	public static void PackUnityResNoCompileLua()
 	{
@@ -240,7 +242,7 @@ public class AssetExport
 
 		string temp_dir = Application.dataPath + "/../../Output/temp";
 
-		CopyDirectorys (src_res+"/Config", temp_dir+"/Config");
+		CopyDirectorys (src_res+"/Configs", temp_dir+"/Configs");
 		CopyDirectorys (src_res+"/StreamingAssets", temp_dir+"/StreamingAssets");
 
 		if (!CompileLuaScripts (src_res + "/Lua", temp_dir + "/Lua", false)) {
@@ -267,7 +269,7 @@ public class AssetExport
 
 		string temp_dir = Application.dataPath + "/../../Output/temp";
 
-		CopyDirectorys (src_res+"/Config", temp_dir+"/Config");
+		CopyDirectorys (src_res+"/Configs", temp_dir+"/Configs");
 		CopyDirectorys (src_res+"/StreamingAssets", temp_dir+"/StreamingAssets");
 
 		if (!CompileLuaScripts (src_res + "/Lua", temp_dir + "/Lua", true)) {
@@ -284,7 +286,7 @@ public class AssetExport
 
 		UnityLog.Log("Zip包自作完成,path=" + dst_res);
 		AssetDatabase.Refresh();
-	}
+	}*/
 
 	[MenuItem("Assets/BundleName/SetBundleName", false, 15)]
 	public static void SetAssetBundleName()

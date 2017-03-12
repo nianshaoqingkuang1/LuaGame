@@ -47,12 +47,10 @@ public class LuaScriptFile : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if(!bRequired){
-			DoScriptFile(()=>
-            {
-                CallMethod("Start");
-            });
-		}		
+		DoScriptFile(()=>
+			{
+				CallMethod("Start");
+			});
 	}
 	
 	// Update is called once per frame
@@ -90,7 +88,7 @@ public class LuaScriptFile : MonoBehaviour {
         {
             yield return new WaitForEndOfFrame();
         }
-        if (!string.IsNullOrEmpty(fn) && env != null)
+		if (!string.IsNullOrEmpty(fn) && env != null && !bRequired)
         {
             bRequired = true;
             object obj = env.doFile(fn);
@@ -98,13 +96,13 @@ public class LuaScriptFile : MonoBehaviour {
             {
                 script = (LuaTable)obj;
 
-                script["this"] = this;
+                script["component"] = this;
                 script["transform"] = transform;
                 script["gameObject"] = gameObject;
             }
         }
-        if (complete != null)
-            complete();
+		if (bRequired && complete != null)
+			complete ();
     }
 
 	void DoScriptFile(System.Action complete = null){
@@ -126,20 +124,12 @@ public class LuaScriptFile : MonoBehaviour {
 	protected object CallMethod(string function, params object[] args)
     {
     	if(!bRequired) return null;
-        if (script == null || script[function] == null || !(script[function] is LuaFunction))
+        if (script == null)
         	return null;
 
-        LuaFunction func = (LuaFunction)script[function];
-
-        if (func == null) return null;
         try
         {
-            object ret = null;
-            if (args != null)
-                ret = func.call(args);
-            else
-                ret = func.call();
-            return ret;
+			return script.safe_invoke(function, args);
         }
         catch (System.Exception e)
         {

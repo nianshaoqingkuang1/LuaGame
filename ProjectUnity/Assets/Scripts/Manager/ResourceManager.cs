@@ -156,11 +156,16 @@ namespace FGame
 				List<UObject> result = new List<UObject>();
 
 				AssetBundle ab = bundleInfo.m_AssetBundle;
-				for (int j = 0; j < assetNames.Length; j++) {
-					string assetPath = assetNames[j];
-					AssetBundleRequest request = ab.LoadAssetAsync(assetPath, list[i].assetType);
-					yield return request;
-					result.Add(request.asset);
+				//场景数据
+				if (ab.isStreamedSceneAssetBundle) {
+				} 
+				else {
+					for (int j = 0; j < assetNames.Length; j++) {
+						string assetPath = assetNames [j];
+						AssetBundleRequest request = ab.LoadAssetAsync (assetPath, list [i].assetType);
+						yield return request;
+						result.Add (request.asset);
+					}
 				}
 
 				if (list[i].onAction != null) {

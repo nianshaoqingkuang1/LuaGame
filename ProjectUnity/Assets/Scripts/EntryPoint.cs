@@ -88,13 +88,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
         string luafilepath = GameUtil.MakePathForLua(f);
         try
         {
-            FileStream fs = File.Open(luafilepath, FileMode.Open);
-            long length = fs.Length;
-            byte[] bytes = new byte[length];
-            fs.Read(bytes, 0, bytes.Length);
-            fs.Close();
-
-            return bytes;
+            return GameUtil.ReadAssetFile(luafilepath);
         }
         catch (Exception)
         {

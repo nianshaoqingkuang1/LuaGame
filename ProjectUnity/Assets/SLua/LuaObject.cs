@@ -1328,6 +1328,11 @@ return index
 			pushArray(l,a);
 		}
 
+		public static void pushValue(IntPtr l, Byte[] a)
+		{
+			pushObject (l, a);
+		}
+
 		public static void pushVar(IntPtr l, object o)
 		{
 			if (o == null)
@@ -1341,14 +1346,12 @@ return index
 
 			
 			PushVarDelegate push;
-			if (typePushMap.TryGetValue(t, out push))
-				push(l, o);
+			if (typePushMap.TryGetValue (t, out push))
+				push (l, o);
 			else if (t.IsEnum)
-			{
-				pushEnum(l, Convert.ToInt32(o));
-			}
+				pushEnum (l, Convert.ToInt32 (o));
 			else if (t.IsArray)
-				pushObject(l, (Array)o);
+				pushArray(l, (Array)o);
 			else
 				pushObject(l, o);
          
@@ -1356,6 +1359,16 @@ return index
 
 		public static void pushArray(IntPtr l, Array a)
 		{
+			//Modify 2017/3
+			if (a == null) {
+				LuaDLL.lua_pushnil(l);
+				return;
+			}
+			if (a.GetType () == typeof(Byte[])) {
+				pushObject (l, a);
+				return;
+			}
+
 			LuaDLL.lua_newtable (l);
 			int pos = 0;
 			foreach (var p in a) 

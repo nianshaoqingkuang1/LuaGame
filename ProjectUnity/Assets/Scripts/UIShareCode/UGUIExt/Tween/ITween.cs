@@ -24,6 +24,7 @@ namespace UGUI
         public VoidDelegate onTweenFinish;
         public VoidDelegate onStepTweenFinish;
 
+		private PlayType lastType = PlayType.Once;
         public PlayType playType = PlayType.Once;
         
         public void Play()
@@ -47,6 +48,7 @@ namespace UGUI
         public void Stop()
         {
             bLastPlaying = false;
+			tween.Kill ();
         }
 
         public bool IsPlaying
@@ -75,8 +77,12 @@ namespace UGUI
         {
             UpdateTweenInfo();
 
-            if(autoPlay)
-                Play();
+			this.lastType = this.playType;
+
+			if (autoPlay)
+				Play ();
+			else
+				Stop ();
         }
 
         void OnDestroy()
@@ -90,9 +96,22 @@ namespace UGUI
         }
         void OnEnable()
         {
-            if(bLastPlaying)
+			if(bLastPlaying && autoPlay)
                 tween.Play();
         }
+
+		void LateUpdate()
+		{
+			if (this.lastType != this.playType) {
+				this.lastType = this.playType;
+				if (playType != PlayType.Once)
+					tween.SetLoops (-1, playType == PlayType.Loop ? LoopType.Restart : LoopType.Yoyo);
+				UpdateTweenInfo();
+				if(bLastPlaying)
+					tween.Play();
+			}
+		}
+
 #if UNITY_EDITOR
         [ContextMenu("Play")]
         protected virtual void PlayTest()

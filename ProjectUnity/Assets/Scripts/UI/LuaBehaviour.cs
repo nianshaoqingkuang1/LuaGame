@@ -206,16 +206,8 @@ namespace FGame {
         /// </summary>
         object CallMethod(string func, params object[] args) {
             if (!initialize || null == msgHandle) return null;
-            if (null == LuaSvr.main || !LuaSvr.main.inited || null == LuaSvr.main.luaState)
-                return null;
-            LuaFunction f = msgHandle[func] as LuaFunction;
-            if (f != null)
-                return f.call(args);
-            else
-            {
-                //LogUtil.LogWarning("no function in lua:" + func);
-                return null;
-            }
+            
+			return msgHandle.safe_invoke (func, args);
         }
 
         //-----------------------------------------------------------------
