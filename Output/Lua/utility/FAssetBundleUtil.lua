@@ -24,7 +24,7 @@ do
 	function FAssetBundleUtil:AsyncLoad(assetBundleName,assetName,cb)
 		print("LoadAssetBundle:" .. assetBundleName .. "@" .. unpack(assetName))
 		self.m_AssetsMgr:LoadAsset(assetBundleName,assetName,function(objs)
-			if cb then cb(objs) end
+			if cb then cb({objs}) end
 		end)
 	end
 

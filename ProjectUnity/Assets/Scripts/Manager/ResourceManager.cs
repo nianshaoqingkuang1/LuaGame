@@ -87,10 +87,20 @@ namespace FGame
 			}
 		}
 
+		[DoNotToLua]
 		public void LoadAsset(string abName, string[] assetNames, Action<UObject[]> action)
 		{
 			Initialize (() => {
 				LoadAsset<UObject> (abName, assetNames, action);
+			});
+		}
+
+		public void LoadAsset(string abName, string[] assetNames, LuaFunction func)
+		{
+			LoadAsset(abName, assetNames, (UObject[] objs) =>
+			{
+					func.call(objs);
+					func.Dispose();
 			});
 		}
 			

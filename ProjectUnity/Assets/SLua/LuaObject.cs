@@ -1328,6 +1328,12 @@ return index
 			pushArray(l,a);
 		}
 
+		//public static void pushValue(IntPtr l, List<object> a)
+		//{
+		//	//pushObject(l, a);
+		//	pushArray(l,a.ToArray());
+		//}
+
 		public static void pushValue(IntPtr l, Byte[] a)
 		{
 			pushObject (l, a);
@@ -1344,14 +1350,16 @@ return index
 			
 			Type t = o.GetType();
 
-			
+			//var tlist = typeof(List<>);
+			//var islist = t.IsGenericType && t.GetGenericTypeDefinition() == tlist;
+
 			PushVarDelegate push;
 			if (typePushMap.TryGetValue (t, out push))
 				push (l, o);
 			else if (t.IsEnum)
 				pushEnum (l, Convert.ToInt32 (o));
 			else if (t.IsArray)
-				pushArray(l, (Array)o);
+				pushArray (l, (Array)o);
 			else
 				pushObject(l, o);
          

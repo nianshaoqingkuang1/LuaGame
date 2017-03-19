@@ -13,6 +13,8 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
     public LogUtil.LogLevel logLevel = LogUtil.LogLevel.Info;
  
     private LuaSvr lua = null;
+	private object lockYieldActionObj = new object();
+	private Queue<Action> mainThreadYieldAction = new Queue<Action> ();
 
     IEnumerator onReStart(Action cb)
     {
@@ -45,6 +47,20 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
     {
         StartCoroutine(onReStart(cb));
     }
+
+	//转到主线程
+	public static IEnumerator _WaitCall_(Func<bool> condition, Action action)
+	{
+		yield return new WaitUntil (condition);
+
+		EntryPoint.Instance.RunInMainThread (action);
+	}
+	public void RunInMainThread(Action action)
+	{
+		lock (lockYieldActionObj) {
+			mainThreadYieldAction.Enqueue (action);
+		}
+	}
 
     void RunApp()
     {
@@ -114,7 +130,16 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     // Update is called once per frame
     void Update () {
-
+		lock (lockYieldActionObj) {
+			if (mainThreadYieldAction.Count > 0)
+			{
+				while (mainThreadYieldAction.Count > 0)
+				{
+					Action action = mainThreadYieldAction.Dequeue ();
+					action ();
+				}
+			}
+		}
 	}
 
     void Cleanup()
