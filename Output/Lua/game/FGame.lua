@@ -76,7 +76,7 @@ do
 		--测试背景音
 		AsyncLoad(ResPathReader.BackgroundMusic, ResPathReader.BackgroundMusic, function(obj)
 			if obj and not obj.isNil then
-				backgroundMusic:PlayBackgroundMusic(obj)
+				--backgroundMusic:PlayBackgroundMusic(obj)
 			end
 		end)
 	end

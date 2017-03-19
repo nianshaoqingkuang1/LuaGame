@@ -13,10 +13,17 @@ do
 	end
 
 	function FNetwork:InitNetwork()
+		if self.m_Network and not self.m_Network.isNil then
+			return
+		end
 		self.m_GoNetwork = NewGameObject(self.m_netName)
 		self.m_Network = self.m_GoNetwork:AddComponent(NetworkManager)
 		self.m_Network:SetMsgHandle(self)
 		DontDestroyOnLoad(self.m_GoNetwork)
+	end
+
+	function FNetwork:FinishWorking()
+		self:Release()
 	end
 
 	function FNetwork:Connect()
@@ -63,25 +70,29 @@ do
 	end
 
 	function FNetwork:SendPB(pb_msg)
-		local FPBHelper = require "pb.FPBHelper"
-		local pb_class = pb_msg:GetMessage()
-		local id = FPBHelper.GetPbId(pb_class)
-		if id then
-			local msgbuf = pb_msg:SerializeToString();
-			local count = self.m_Network:SendPbMessage(msgbuf)
-		    warn("send bytes-count:",count, ", content:", pb_msg)
+		local meta = message_common_pb.Message()
+		meta.message_name = pb_msg:GetMessage():GetDescriptor().full_name
+		meta.message_body = pb_msg:SerializeToString()
 
-		    local buffer = NewByteBuffer()
-		    buffer:WriteBytesString(msgbuf)
-		    local bytes = buffer:ToBytes()
-		    buffer:Close()
-		    buffer = NewByteBuffer(bytes)
-		    bytes = buffer:ReadBytes()
-		    buffer:Close()
-		    warn("Send bytes:", GameUtil.ToBytesString(bytes, ","))
+		local msgbuf = meta:SerializeToString()
+		local count = self.m_Network:SendPbMessage(msgbuf)
+		warn("send bytes-count:",count, ", content:", meta)
+	end
+
+	function FNetwork:BytesToMessage(data)
+		local meta = message_common_pb.Message()
+		meta:ParseFromString(data)
+		local fileds = meta.message_name:split(".")
+		local module_,class_ = fileds[1],fileds[2]
+		local pb_module = require ("pb."..module_.."_pb")
+		local msg
+		if type(pb_module) == "table" then
+			msg = pb_module[class_]()
 		else
-			warn("Can not GetPbId pb_class:",pb_class)
+			msg = _G[module_.."_pb"][class_]()
 		end
+		msg:ParseFromString(meta.message_body)
+		return msg
 	end
 
 	function FNetwork:OnConnected()

@@ -36,6 +36,7 @@ namespace SuperSocket.ClientEngine
                 writer.Write(buffer);
                 writer.Flush();
                 byte[] payload = ms.ToArray();
+                LogUtil.Log("Send:{0}", GameUtil.ToHexString(payload));
                 return Send(payload, 0, payload.Length);
             }
 			//return Send (buffer, 0, buffer.Length);
@@ -78,7 +79,10 @@ namespace SuperSocket.ClientEngine
         {
             if (null != NetMgr)
             {
-                NetMgr.AddEvent(Protocal.GameData, new ByteBuffer(data));
+				ByteBuffer buffer = new ByteBuffer();
+				buffer.WriteBytes (data);
+				NetMgr.AddEvent(Protocal.GameData, new ByteBuffer(buffer.ToBytes()));
+				buffer.Close ();
             }
             else
                 LogUtil.Log("onReceive:{0}", GameUtil.ToHexString(data));

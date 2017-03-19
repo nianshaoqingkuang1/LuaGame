@@ -53,7 +53,7 @@ do
 		local nameObj = self:FindChildObj(OBJPATH.Name)
 		local passwdObj = self:FindChildObj(OBJPATH.Passwd)
 		local ip = "127.0.0.1"
-		local port = 3001
+		local port = 8001
 		local name = FGUITools.getInputText(nameObj)
 		local passwd = FGUITools.getInputText(passwdObj)
 		theGame.m_LogicNetwork:ConnectTo(ip,port,name,passwd)

@@ -9,6 +9,8 @@ local FUpdateSession = FLua.Class("FUpdateSession", FNetwork)
 do
 	function FUpdateSession:_ctor()
 		self.m_netName = "UpdateSession"
+		self.m_DirInfo = nil
+		self.m_isDone = false
 	end
 	function FUpdateSession.Instance()
 		if not l_instance then
@@ -19,27 +21,25 @@ do
 
 	function FUpdateSession:OnConnected()
 		FNetwork.OnConnected(self)
-		local buffer = NewByteBuffer()
-		buffer:WriteBytesString("Hello\n")
-		local bytes = buffer:ToBytes()
-		buffer:Close()
-        self:Send(bytes)
+		local msg = message_common_pb.DirInfo()
+		self:SendPB(msg)
 	end
 
 	function FUpdateSession:OnGameData(buffer)
         local bytes = buffer:ReadBytes()
-        warn("bytes", bytes)
-		warn("FUpdateSession:OnGameData", LuaHelper.BytesToString(bytes))
+		--warn("FUpdateSession:OnGameData", GameUtil.ToHexString(bytes,","))
+		local msg = self:BytesToMessage(LuaHelper.BytesToLuaString(bytes))
+		self.m_DirInfo = msg.version
+		self.m_isDone = true
 	end
 
 	function FUpdateSession:OnDisconnect(reason, err_msg)
 		FNetwork.OnDisconnect(self, reason, err_msg)
-		local content = reason == "broken" and StringReader.Get(1) or StringReader.Get(2)
-		MsgBox(self,content,reason,MsgBoxType.MBBT_OKCANCEL,function(_,ret)
-			if ret == MsgBoxRetT.MBRT_OK then
-				self:Connect()
-			end
-		end)
+		self.m_isDone = true
+	end
+
+	function FUpdateSession:IsDone()
+		return self.m_isDone
 	end
 end
 
