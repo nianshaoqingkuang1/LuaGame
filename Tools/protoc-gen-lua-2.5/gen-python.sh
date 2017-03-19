@@ -38,8 +38,8 @@ gen()
 #gen -I=$protos_dir --python_out=$out_dir $protos_dir/google/protobuf/*.proto
 gen -I=$protos_dir --python_out=$out_dir $protos_dir/*.proto
 
-if [ -d "$current_path/../../Python/GameServer/protobuf" ]; then
-	cp -rf "$out_dir/"* "$current_path/../../Python/GameServer/protobuf/"
+if [ -d "$current_path/../../GameServer/protobuf" ]; then
+	cp -rf "$out_dir/"* "$current_path/../../GameServer/protobuf/"
 fi
 
 exit 0

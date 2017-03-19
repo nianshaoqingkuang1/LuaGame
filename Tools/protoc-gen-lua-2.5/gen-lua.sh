@@ -43,8 +43,8 @@ gen()
 #gen $protos_dir/google/protobuf/*.proto --lua_out="$out_dir" --plugin=protoc-gen-lua="$plugin" --proto_path="$protos_dir"
 gen $protos_dir/*.proto --lua_out="$out_dir" --plugin=protoc-gen-lua="$plugin" --proto_path="$protos_dir"
 
-if [ -d "$current_path/../../Unity/LuaGame/Output/Lua/pb" ]; then
-	cp -rf "$out_dir/"* "$current_path/../../Unity/LuaGame/Output/Lua/pb"
+if [ -d "$current_path/../../Output/Lua/pb" ]; then
+	cp -rf "$out_dir/"* "$current_path/../../Output/Lua/pb"
 fi
 
 exit 0
