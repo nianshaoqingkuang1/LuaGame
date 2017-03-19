@@ -1,0 +1,11 @@
+package message_common;
+
+message DirInfo {
+	optional bytes version			= 1;
+}
+
+message Message {
+	optional string message_name 	= 1;
+	optional bytes message_body    	= 2;
+}
+

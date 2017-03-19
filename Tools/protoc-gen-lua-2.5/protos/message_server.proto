@@ -1,0 +1,8 @@
+package message_server;
+
+import "message_common.proto";
+
+message TestMessageRe {
+	optional int32 id      = 1;
+	optional bytes buff    = 2;
+}

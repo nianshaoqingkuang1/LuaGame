@@ -1,0 +1,15 @@
+import "message_common.proto";
+
+package message_client;
+
+message TestMessage {
+	optional int32 id      = 1;
+	optional bytes buff    = 2;
+}
+
+message TestMessage2 {
+	optional int32 id      = 1;
+	optional bytes buff    = 2;
+}
+
+
