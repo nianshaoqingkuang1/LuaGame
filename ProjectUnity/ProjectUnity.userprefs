@@ -1,24 +1,36 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Manager/ResourceManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs">
     <Files>
-      <File FileName="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" Line="128" Column="1" />
-      <File FileName="Assets/SLua/LuaObject.cs" Line="1335" Column="5" />
-      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="28" Column="14" />
-      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="51" Column="21" />
-      <File FileName="Assets/SLua/Coroutine.cs" Line="68" Column="20" />
-      <File FileName="Assets/LuaInterface/LuaObject/Unity/LuaSystem_Func_1_bool.cs" Line="40" Column="16" />
-      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="575" Column="7" />
-      <File FileName="Assets/Scripts/EntryPoint.cs" Line="58" Column="29" />
-      <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="103" Column="21" />
-      <File FileName="Assets/SLua/LuaState.cs" Line="256" Column="1" />
-      <File FileName="Assets/Scripts/Utility/PersistentHumbleSingleton.cs" Line="7" Column="58" />
+      <File FileName="Assets/SLua/LuaObject.cs" Line="1386" Column="25" />
+      <File FileName="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" Line="30" Column="44" />
+      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/SLua/Coroutine.cs" Line="98" Column="24" />
+      <File FileName="Assets/LuaInterface/LuaObject/Unity/LuaSystem_Func_1_bool.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="584" Column="6" />
+      <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="103" Column="20" />
+      <File FileName="Assets/SLua/LuaState.cs" Line="1171" Column="39" />
+      <File FileName="Assets/Scripts/Utility/PersistentHumbleSingleton.cs" Line="1" Column="1" />
+      <File FileName="Assets/SLua/LuaSvr.cs" Line="253" Column="20" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_GameUtil.cs" Line="194" Column="27" />
+      <File FileName="Assets/SLua/ObjectCache.cs" Line="319" Column="1" />
+      <File FileName="Assets/SLua/LuaVarObject.cs" Line="367" Column="66" />
+      <File FileName="Assets/SLua/Helper.cs" Line="439" Column="43" />
+      <File FileName="Assets/LuaInterface/LuaCustom/Lua_FGame_ByteBuffer_2.cs" Line="1" Column="19" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" Line="253" Column="13" />
+      <File FileName="Assets/SLua/LuaObject_basetype.cs" Line="320" Column="3" />
+      <File FileName="Assets/SLua/LuaDLL.cs" Line="28" Column="20" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_NetworkManager.cs" line="52" column="1" />
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="263" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/SLua/LuaObject.cs" line="1411" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_GameUtil.cs" line="370" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/SLua/LuaState.cs" line="360" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_GameUtil.cs" line="193" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
