@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="97588109-e2b0-4bfb-aa30-b28fe5015792" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/plugin/.___pycache__" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/plugin/._gen-lua" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/plugin/._gen-lua.exe" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/plugin/._plugin_pb2.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/plugin/._protoc-gen-lua" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/protobuf/._encoder.lua" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../Tools/protoc-gen-lua-2.5/protos/google/protobuf/._descriptor.proto" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Output/Lua/FMain.lua" afterPath="$PROJECT_DIR$/../Output/Lua/FMain.lua" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Output/Lua/game/FGameUpdate.lua" afterPath="$PROJECT_DIR$/../Output/Lua/game/FGameUpdate.lua" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ProjectUnity/Assets/Scripts/EntryPoint.cs" afterPath="$PROJECT_DIR$/../ProjectUnity/Assets/Scripts/EntryPoint.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ProjectUnity/Assets/Scripts/Utility/GameUtil.cs" afterPath="$PROJECT_DIR$/../ProjectUnity/Assets/Scripts/Utility/GameUtil.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ProjectUnity/ProjectUnity.userprefs" afterPath="$PROJECT_DIR$/../ProjectUnity/ProjectUnity.userprefs" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -595,7 +584,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38487583" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38487583" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />

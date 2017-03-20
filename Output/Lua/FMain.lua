@@ -31,6 +31,10 @@ function main( )
 		local co3, ismain = coroutine.running()
 		print("co3",co3,ismain)
 	end)]]
+
+	local a = GameUtil.Test()
+	print ("a", a)
+	for obj, callback in pairs(a) do print(obj, callback) end
 end
 
 

@@ -584,6 +584,14 @@ public class GameUtil
 		});
 	}
 
+			public static Dictionary<string,GameObject> Test()
+			{
+			Dictionary<string,GameObject> a = new Dictionary<string, GameObject> ();
+			a ["hello"] = new GameObject("hello");
+			a ["hello world"] = new GameObject("hello2");
+		return a;
+			}
+
     public static void LuaGC()
     {
         if (null == LuaSvr.main || !LuaSvr.main.inited || null == LuaSvr.main.luaState)

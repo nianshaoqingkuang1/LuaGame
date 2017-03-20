@@ -1,16 +1,22 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Manager/ResourceManager.cs">
     <Files>
-      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_NetworkManager.cs" Line="52" Column="1" />
-      <File FileName="Assets/SLua/LuaObject.cs" Line="1333" Column="1" />
-      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" Line="252" Column="22" />
+      <File FileName="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" Line="128" Column="1" />
+      <File FileName="Assets/SLua/LuaObject.cs" Line="1335" Column="5" />
+      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="28" Column="14" />
+      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="51" Column="21" />
+      <File FileName="Assets/SLua/Coroutine.cs" Line="68" Column="20" />
+      <File FileName="Assets/LuaInterface/LuaObject/Unity/LuaSystem_Func_1_bool.cs" Line="40" Column="16" />
+      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="575" Column="7" />
+      <File FileName="Assets/Scripts/EntryPoint.cs" Line="58" Column="29" />
+      <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="103" Column="21" />
+      <File FileName="Assets/SLua/LuaState.cs" Line="256" Column="1" />
+      <File FileName="Assets/Scripts/Utility/PersistentHumbleSingleton.cs" Line="7" Column="58" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="250" column="1" />
-      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="253" column="1" />
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_NetworkManager.cs" line="52" column="1" />
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" line="263" column="1" />
     </BreakpointStore>

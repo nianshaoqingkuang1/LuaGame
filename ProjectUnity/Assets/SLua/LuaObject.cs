@@ -1327,13 +1327,7 @@ return index
 			//pushObject(l, a);
 			pushArray(l,a);
 		}
-
-		//public static void pushValue(IntPtr l, List<object> a)
-		//{
-		//	//pushObject(l, a);
-		//	pushArray(l,a.ToArray());
-		//}
-
+			
 		public static void pushValue(IntPtr l, Byte[] a)
 		{
 			pushObject (l, a);
@@ -1353,6 +1347,9 @@ return index
 			//var tlist = typeof(List<>);
 			//var islist = t.IsGenericType && t.GetGenericTypeDefinition() == tlist;
 
+			//var tdict = typeof(Dictionary<,>);
+			//var isdict = t.IsGenericType && t.GetGenericTypeDefinition () == tdict;
+
 			PushVarDelegate push;
 			if (typePushMap.TryGetValue (t, out push))
 				push (l, o);
@@ -1360,6 +1357,10 @@ return index
 				pushEnum (l, Convert.ToInt32 (o));
 			else if (t.IsArray)
 				pushArray (l, (Array)o);
+			else if (o is IList)
+				pushList (l, o as IList);
+			else if (o is IDictionary)
+				pushDict (l, o as IDictionary);
 			else
 				pushObject(l, o);
          
@@ -1386,6 +1387,37 @@ return index
 			}
 		}
 
+		public static void pushList(IntPtr l, IList a)
+		{
+			if (a == null) {
+				LuaDLL.lua_pushnil(l);
+				return;
+			}
+
+			LuaDLL.lua_newtable (l);
+			int pos = 0;
+			foreach (var p in a) 
+			{
+				pushValue (l, p);
+				LuaDLL.lua_rawseti (l, -2, ++pos);
+			}
+		}
+
+		public static void pushDict(IntPtr l, IDictionary a)
+		{
+			if (a == null) {
+				LuaDLL.lua_pushnil(l);
+				return;
+			}
+
+			int oldTop = LuaDLL.lua_gettop(l);
+			LuaDLL.lua_newtable (l);
+			foreach (var p in a.Keys) {
+				pushVar (l, p);
+				pushVar (l, a [p]);
+				LuaDLL.lua_settable(l, -3);
+			}
+		}
 
 
 		public static T checkSelf<T>(IntPtr l)

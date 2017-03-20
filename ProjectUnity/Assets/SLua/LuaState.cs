@@ -348,6 +348,19 @@ namespace SLua
 			}
 		}
 
+		public object this[object okey]
+		{
+			get
+			{
+				return state.getObject(valueref, okey);
+			}
+
+			set
+			{
+				state.setObject(valueref, okey, value);
+			}
+		}
+
 		public object invoke(string func, params object[] args)
 		{
 			LuaFunction f = (LuaFunction)this[func];
@@ -1101,7 +1114,7 @@ end
 		{
 			int oldTop = LuaDLL.lua_gettop(L);
 			LuaDLL.lua_getref(L, reference);
-			LuaObject.pushObject(L, field);
+			LuaObject.pushVar(L, field);
 			LuaDLL.lua_gettable(L, -2);
 			object returnValue = getObject(L, -1);
 			LuaDLL.lua_settop(L, oldTop);
@@ -1149,8 +1162,8 @@ end
 		{
 			int oldTop = LuaDLL.lua_gettop(L);
 			LuaDLL.lua_getref(L, reference);
-			LuaObject.pushObject(L, field);
-			LuaObject.pushObject(L, o);
+			LuaObject.pushVar(L, field);
+			LuaObject.pushVar(L, o);
 			LuaDLL.lua_settable(L, -3);
 			LuaDLL.lua_settop(L, oldTop);
 		}
