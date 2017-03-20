@@ -41,7 +41,7 @@ do
 		local pb_class = FPBHelper.GetPbClass(id)
 		if pb_class then
 			local msg = pb_class()
-			msg:ParseFromString(buffer:ReadeBytesString())
+			msg:ParseFromString(buffer:ReadBytesString())
 			FireEvent(FPBHelper.GetPbName(pb_class),msg)
 			warn("Receive PB:",pb_class,msg)
 		else

@@ -26,9 +26,8 @@ do
 	end
 
 	function FUpdateSession:OnGameData(buffer)
-        local bytes = buffer:ReadBytes()
-		--warn("FUpdateSession:OnGameData", GameUtil.ToHexString(bytes,","))
-		local msg = self:BytesToMessage(LuaHelper.BytesToLuaString(bytes))
+        local bytes = buffer:ReadBytesString()
+		local msg = self:BytesToMessage(bytes)
 		self.m_DirInfo = msg.version
 		self.m_isDone = true
 	end

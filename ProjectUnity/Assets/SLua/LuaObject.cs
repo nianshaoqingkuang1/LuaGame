@@ -1330,7 +1330,7 @@ return index
 			
 		public static void pushValue(IntPtr l, Byte[] a)
 		{
-			pushObject (l, a);
+			pushBytes (l, a);
 		}
 
 		public static void pushVar(IntPtr l, object o)
@@ -1340,15 +1340,8 @@ return index
 				LuaDLL.lua_pushnil(l);
 				return;
 			}
-
 			
 			Type t = o.GetType();
-
-			//var tlist = typeof(List<>);
-			//var islist = t.IsGenericType && t.GetGenericTypeDefinition() == tlist;
-
-			//var tdict = typeof(Dictionary<,>);
-			//var isdict = t.IsGenericType && t.GetGenericTypeDefinition () == tdict;
 
 			PushVarDelegate push;
 			if (typePushMap.TryGetValue (t, out push))
@@ -1366,6 +1359,16 @@ return index
          
 		}
 
+		public static void pushBytes(IntPtr l, Byte[] a)
+		{
+			if (a == null) {
+				LuaDLL.lua_pushnil(l);
+				return;
+			}
+			//LuaDLL.lua_pushlstring(l, a, a.Length);
+			pushObject(l, a);
+		}
+
 		public static void pushArray(IntPtr l, Array a)
 		{
 			//Modify 2017/3
@@ -1374,7 +1377,7 @@ return index
 				return;
 			}
 			if (a.GetType () == typeof(Byte[])) {
-				pushObject (l, a);
+				pushBytes (l, a as Byte[]);
 				return;
 			}
 

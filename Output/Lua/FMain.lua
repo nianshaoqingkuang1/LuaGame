@@ -14,14 +14,10 @@ function main( )
 	print("co2",co2,ismain)
 
 	local co = coroutine.create(function ( )
-		local co3, ismain = coroutine.running()
-		print("co3",co3,ismain)
 		Yield(WaitUntil(function() return FGameUpdate.Instance():IsFinished() end))
 		GameUtil.RunInMainThread(function()
-		warn("开始游戏。")
-		local co3, ismain = coroutine.running()
-		print("co3",co3,ismain)
-		theGame:Run()
+			warn("在主线程中运行，开始游戏。")
+			theGame:Run()
 		end)
 	end)
 
@@ -31,10 +27,6 @@ function main( )
 		local co3, ismain = coroutine.running()
 		print("co3",co3,ismain)
 	end)]]
-
-	local a = GameUtil.Test()
-	print ("a", a)
-	for obj, callback in pairs(a) do print(obj, callback) end
 end
 
 

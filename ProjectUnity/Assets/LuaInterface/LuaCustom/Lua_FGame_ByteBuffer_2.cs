@@ -28,7 +28,7 @@ public class Lua_FGame_ByteBuffer_2 : LuaObject {
         }
     }
     [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-    static public int ReadeBytesString(IntPtr l)
+    static public int ReadBytesString(IntPtr l)
     {
         try
         {
@@ -47,6 +47,6 @@ public class Lua_FGame_ByteBuffer_2 : LuaObject {
 
     static public void reg_custom(IntPtr l) {
         addMember(l, WriteBytesString);
-        addMember(l, ReadeBytesString);
+        addMember(l, ReadBytesString);
     }
 }

@@ -36,7 +36,6 @@ namespace SuperSocket.ClientEngine
                 writer.Write(buffer);
                 writer.Flush();
                 byte[] payload = ms.ToArray();
-                LogUtil.Log("Send:{0}", GameUtil.ToHexString(payload));
                 return Send(payload, 0, payload.Length);
             }
 			//return Send (buffer, 0, buffer.Length);
