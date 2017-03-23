@@ -49,9 +49,8 @@ do
 		end
 	end
 
-	function FLogicSession:OnDisconnect(reason, err_msg)
-		FNetwork.OnDisconnect(self, reason, err_msg)
-		local content = reason == "broken" and StringReader.Get(1) or StringReader.Get(2)
+	function FLogicSession:OnDisconnect(err_code, err_msg)
+		local content = err_code == 0 and StringReader.Get(2) or StringReader.Get(1)
 		MsgBox(self,content,reason,MsgBoxType.MBBT_OKCANCEL,function(_,ret)
 			if ret == MsgBoxRetT.MBRT_OK then
 				self:Connect()

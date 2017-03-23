@@ -65,13 +65,16 @@ namespace SuperSocket.ClientEngine
 
         void onError(object sender, ErrorEventArgs e)
         {
+			System.Net.Sockets.SocketException ex = e.Exception as System.Net.Sockets.SocketException;
             if (null != NetMgr)
             {
                 ByteBuffer buffer = new ByteBuffer();
-                buffer.WriteString(e.Exception.Message);
+				buffer.WriteInt (ex.ErrorCode);
+                buffer.WriteString(ex.Message);
                 NetMgr.AddEvent(Protocal.Exception, new ByteBuffer(buffer.ToBytes()));
             }
-			LogUtil.LogWarning("Socket Error:"+e.Exception.Message);
+			else
+				LogUtil.LogWarning("Socket Error {0}:{1}",ex.ErrorCode,ex.Message);
         }
 
         void onReceive(object sender, byte[] data)

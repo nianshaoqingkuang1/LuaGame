@@ -32,8 +32,8 @@ do
 		self.m_isDone = true
 	end
 
-	function FUpdateSession:OnDisconnect(reason, err_msg)
-		FNetwork.OnDisconnect(self, reason, err_msg)
+	function FUpdateSession:OnDisconnect(err_code, err_msg)
+		warn("FUpdateSession.OnDisconnect",err_code, err_msg)
 		self.m_isDone = true
 	end
 

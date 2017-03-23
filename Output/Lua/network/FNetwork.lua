@@ -111,9 +111,7 @@ do
 		end)
 	end
 
-	function FNetwork:OnDisconnect(reason, err_msg)
-		warn(self.m_netName .. ".OnDisconnect reason="..reason .. ",err_msg="..err_msg)
-		self.m_status = reason
+	function FNetwork:OnDisconnect(err_code,err_msg)
 	end
 
 	function FNetwork:OnPing(buffer)
@@ -127,9 +125,11 @@ do
 		if protocal == Protocal.Connect then
 			self:OnConnected()
 		elseif protocal == Protocal.Exception then
-			self:OnDisconnect("broken", buffer:ReadString())
+			self.m_status = "broken"
+			self:OnDisconnect(buffer:ReadInt(), buffer:ReadString())
 		elseif protocal == Protocal.Disconnect then
-			self:OnDisconnect("disconnect", buffer:ReadString())
+			self.m_status = "broken"
+			self:OnDisconnect(0,buffer:ReadString())
 		elseif protocal == Protocal.Timeout then
 			self:OnTimeout()
 		elseif protocal == Protocal.Ping then
@@ -137,6 +137,7 @@ do
 		elseif protocal == Protocal.GameData then
 			self:OnGameData(buffer)
 		end
+		buffer:Close()
 	end
 
 	function FNetwork:OnGameData(buffer)
