@@ -565,24 +565,6 @@ public class GameUtil
             cb.Dispose();
         }));
     }
-	
-	public static void WaitCall(Func<bool> condition, LuaFunction func)
-	{
-		EntryPoint.Instance.StartCoroutine(EntryPoint._WaitCall_(condition, ()=>
-		{
-			func.call();
-			func.Dispose();
-		}));
-	}
-
-	public static void RunInMainThread(LuaFunction func)
-	{
-		EntryPoint.Instance.RunInMainThread (()=>
-		{
-			func.call();
-			func.Dispose();
-		});
-	}
 
 			public static Dictionary<string,GameObject> Test()
 			{

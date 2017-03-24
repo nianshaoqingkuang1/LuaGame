@@ -25,15 +25,10 @@ do
 	end
 
 	function FGame:InitGame()
-		--GameManager
+		--NetworkManager
 		self.m_LogicNetwork = FLogicSession.Instance()
 		self.m_LogicNetwork:InitNetwork()
-		self.m_AssetBundle = FAssetBundleUtil.Instance()
-		self.m_AssetBundle:InitAssetBundle()
 		self:InitGameObject()
-		--Init GUIRoot
-		local FGUIMan = require "ui.FGUIMan"
-		FGUIMan.Instance():InitUIRoot()
 		local FFlashTipMan = require "manager.FFlashTipMan"
 		FlashTipMan:InitCacheRoot()
 	end
@@ -43,6 +38,9 @@ do
 	end
 
 	function FGame:InitGameObject()
+		if self.m_MainCam and not self.m_MainCam.isNil then
+			return
+		end
 		--Main Camera
 		local cam_root = NewGameObject("MainCamera Root")
 	    cam_root.transform.localPosition = Vector3(0, 0, 0);
@@ -56,7 +54,6 @@ do
 	    camobj:AddComponent(UnityEngine.Camera)
 	    camobj:AddComponent(UnityEngine.FlareLayer)
         camobj:AddComponent(LuaHelper.GetClsType("UnityEngine.GUILayer"));
-        --camobj:AddComponent(UnityEngine.AudioListener)
         camobj.tag = "MainCamera"
         self.m_MainCam = camobj
 	    DontDestroyOnLoad(cam_root)
@@ -64,6 +61,32 @@ do
 	    local goAudio = NewGameObject("AudioListener")
 	    goAudio:AddComponent(UnityEngine.AudioListener)
 	    DontDestroyOnLoad(goAudio)
+	end
+
+	function FGame:Setup()
+		MainThreadTask.Init()
+		--AssetBundleManager
+		self.m_AssetBundle = FAssetBundleUtil.Instance()
+		self.m_AssetBundle:InitAssetBundle()
+		--Camera
+		self:InitGameObject()
+	end
+
+	function FGame:Run()
+		self:InitGame()
+		self:EnterLoginStage()
+	end
+	function FGame:EnterLoginStage()
+		self:InitLoginInfo()
+		local login = require "ui.FLoginUI"
+		login.Instance():ShowPanel(true)
+	end
+	function FGame:LeaveLoginState()
+		local login = require "ui.FLoginUI"
+		login.Instance():ShowPanel(false)
+	end
+
+	function FGame:EnterGameLogic()
 		--Init FHotKeyLogic
 		local hotGo = NewGameObject("FHotKeyLogic")
 		local clsT = LuaHelper.GetClsType("FHotKeyLogic")
@@ -79,24 +102,7 @@ do
 				backgroundMusic:PlayBackgroundMusic(obj)
 			end
 		end)
-	end
 
-	function FGame:Run()
-		self:InitGame()
-
-		self:EnterLoginStage()
-	end
-	function FGame:EnterLoginStage()
-		self:InitLoginInfo()
-		local login = require "ui.FLoginUI"
-		login.Instance():ShowPanel(true)
-	end
-	function FGame:LeaveLoginState()
-		local login = require "ui.FLoginUI"
-		login.Instance():ShowPanel(false)
-	end
-
-	function FGame:EnterGameLogic()
 		local FWaitingUI = require "ui.FWaitingUI"
 		FWaitingUI.Instance():DestroyPanel()
 		self:LeaveLoginState()

@@ -59,6 +59,9 @@ do
 	end
 
 	function FBaseUI:CreatePanel(assetName)
+		--Init GUIRoot
+		FGUIMan.Instance():InitUIRoot()
+
 		if not self.m_loading and not self.m_created then
 			self.m_abName = assetName
 			self.m_panelName = getPanelNameFromResName(assetName)

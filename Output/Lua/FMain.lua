@@ -4,22 +4,24 @@ require "FPreload"
 require "game.FGame"
 
 function main( )
+	--设置环境，全局管理器，Manager，资源加载
+	theGame:Setup()
+
 	local FGameUpdate = require "patches.FGameUpdate"
 	FGameUpdate.Instance():Run()
 
 	local co = coroutine.create(function ( )
 		Yield(WaitUntil(function() return FGameUpdate.Instance():IsFinished() end))
-		GameUtil.RunInMainThread(function()
+		MainThreadTask.RunInMainThread(function()
 			warn("在主线程中运行，开始游戏。")
 			theGame:Run()
 		end)
 	end)
-
 	coroutine.resume(co)
-	--[[GameUtil.WaitCall(function() return FGameUpdate.Instance():IsFinished() end, function()
+	
+	--[[MainThreadTask.RunUntilFinish(function() return FGameUpdate.Instance():IsFinished() end,function()
+		warn("在主线程中运行，开始游戏。")
 		theGame:Run()
-		local co3, ismain = coroutine.running()
-		print("co3",co3,ismain)
 	end)]]
 end
 

@@ -5,5 +5,5 @@
     <!--resource_update 是否允许更新-->
     <!--skip_resourceupdate 是否允许跳过更新-->
     <!--package_url 更新地址-->
-    <version program_version="1.0.1" resource_version="0.0.1" resource_update="true" skip_resourceupdate="true" package_url="http://127.0.0.1/resources/patches/" />
+    <version program_version="1.0.1" resource_version="0.0.2" resource_update="true" skip_resourceupdate="true" package_url="http://127.0.0.1/resources/patches/" />
 </app>
