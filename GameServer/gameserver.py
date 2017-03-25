@@ -29,8 +29,11 @@ class app(object):
         self.network.run(port)
         ioloop.IOLoop.instance().start()
 
+def main():
+    app().run(8001)
 
 if __name__ == "__main__":
-    a = app()
-    b = app()
-    print a,b,a==b
+    try:
+        main()
+    except:
+        quit()

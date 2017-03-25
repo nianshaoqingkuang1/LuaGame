@@ -264,7 +264,20 @@ do
                 MsgBox(self,StringReader.Get(8),"update",MsgBoxType.MBBT_OKCANCEL,function(_,ret)
                     if ret == MsgBoxRetT.MBRT_OK then
                         warn("准备下载更新资源")
-                        self:Finish()
+                        GameUtil.DownLoad("http://localhost:8003/patches/pynet.rar","/Volumes/SHARED/Downloads/py.rar",true,true,nil,function(a,b,c)
+                            print("progress:",a,b,c)
+                        end,function(succeess, req, resp, complete_param)
+                     		print(req,resp)
+                     		if not req.Exception then
+                     			if resp.IsSuccess then
+                     				print("download completed.. now unzip")
+                     				--tmpfile=this.AssetRoot.."/tmp.zip"
+                     			end
+                     	    else 
+                     	    	print("DownLoad file err",resp)
+                     		end
+                             self:Finish()
+                     	end)
                     end
                 end)
             else

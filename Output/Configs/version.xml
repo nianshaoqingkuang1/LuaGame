@@ -4,5 +4,5 @@
     <!--program-->
     <program method="open_url" action="http://www.baidu.com" m5d=""/>
     <!--package_url 更新地址-->
-    <resource package_url="http://127.0.0.1/resources/patches/" ext=".zip"/>
+    <resource package_url="http://127.0.0.1／patches/" ext=".zip"/>
 </app>
