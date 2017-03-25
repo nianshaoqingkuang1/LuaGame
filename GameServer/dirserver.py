@@ -5,7 +5,6 @@ from network.server import TCPBaseServer
 from utils.logger import logger
 from utils.singleton import singleton
 
-
 @singleton
 class app(object):
     '''
@@ -23,9 +22,12 @@ class app(object):
         self.network.run(port)
         ioloop.IOLoop.instance().start()
 
+#入口
+def main():
+    app().run(8002)
 
 if __name__ == "__main__":
     try:
-        app().run(8002)
-    except Exception as e:
+        main()
+    except:
         quit()
