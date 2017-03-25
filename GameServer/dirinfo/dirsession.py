@@ -18,11 +18,16 @@ class DirSession(TCPConnectionDelegage):
             self.close()
     def _send_dirinfo(self):
         path = os.path.split(os.path.realpath(__file__))[0].replace("\\", "/")
-        filename = path + "/bin/version.xml"
         msg = message_common_pb2.DirInfo()
+        filename = path + "/bin/version.xml"
         with open(filename,"rb") as fin:
             data = fin.read()
             msg.version = data
+            fin.close()
+        filename = path + "/bin/version.txt"
+        with open(filename, "rb") as fin:
+            data = fin.read()
+            msg.patches = data
             fin.close()
         buff = pb_helper.MessageToSendBytes(msg)
         logger().i("send dirinfo to %s, %s", str(self.address), pb_helper.debug_bytes(buff))

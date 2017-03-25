@@ -2,6 +2,7 @@ package message_common;
 
 message DirInfo {
 	optional bytes version			= 1;
+	optional bytes patches			= 2;
 }
 
 message Message {

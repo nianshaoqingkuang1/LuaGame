@@ -3,23 +3,10 @@ local SLAXML = require "lib.SLAXML.slaxdom"
 local FGameUpdate = FLua.Class("FGameUpdate")
 local l_instance = nil
 do
-    local function parseVersion(content)
-        local doc = SLAXML:dom(content)
-        if not doc then return nil end
-        local root = doc.root
-        if not root then return nil end
-        local result = {}
-        result.project_name = root.attr.name
-        local versioninfo = doc.root.el[1]
-        result.program_version = versioninfo.attr.program_version
-        result.resource_version = versioninfo.attr.resource_version
-        result.resource_update = versioninfo.attr.resource_update
-        result.skip_resourceupdate = versioninfo.attr.skip_resourceupdate
-        result.package_url = versioninfo.attr.package_url
-
-        return result
+    local _MAX_VERSION_ = 9999
+    local function tobool(str)
+        return str == "true" or str == "1"
     end
-
     local function compareVersionString(versionA,versionB)
         local va = versionA:split(".")
         local vb = versionB:split(".")
@@ -33,34 +20,179 @@ do
         if localV3 > remoteV3 then return 1 else
         return 0 end
     end
+    local function nextVersionStr(versionA)
+        local va = versionA:split(".")
+        local localV1,localV2,localV3 = tonumber(va[1]),tonumber(va[2]),tonumber(va[3])
+        if localV3 < _MAX_VERSION_ then
+            return string.format("%d.%d.%d",localV1,localV2,localV3+1)
+        elseif localV2 < _MAX_VERSION_ then
+            return string.format("%d.%d.%d",localV1,localV2+1,0)
+        else
+            return string.format("%d.%d.%d",localV1+1,0,0)
+        end
+    end
+      local function prevVersionStr(versionA)
+        local va = versionA:split(".")
+        local localV1,localV2,localV3 = tonumber(va[1]),tonumber(va[2]),tonumber(va[3])
+        if localV3 >0 then
+            return string.format("%d.%d.%d",localV1,localV2,localV3-1)
+        elseif localV2 > 0 then
+            return string.format("%d.%d.%d",localV1,localV2-1,_MAX_VERSION_)
+        else
+            return string.format("%d.%d.%d",localV1-1,_MAX_VERSION_,_MAX_VERSION_)
+        end
+    end
+    --version.xml
+    local function parseVersion(content)
+        local doc = SLAXML:dom(content)
+        if not doc then return nil end
+        local root = doc.root
+        if not root then return nil end
+        local result = {}
+        result.project_name = root.attr.name
+        for i,v in ipairs(root.el) do
+            if v.name == "program" then
+                result.program = {
+                    method = v.attr.method,
+                    action = v.attr.action,
+                    md5 = v.attr.md5,
+                }
+            elseif v.name == "resource" then
+                result.resource = {
+                    package_url = v.attr.package_url,
+                    ext = v.attr.ext,
+                }
+            end
+        end
+
+        return result
+    end
+    --启动参数
+    local function parseEntryConfig(content)
+        local doc = SLAXML:dom(content)
+        if not doc then return nil end
+        local root = doc.root
+        if not root then return nil end
+        local result = {}
+
+        for i,v in ipairs(root.el) do
+            if v.name == "program_updage" then
+                result.program_updage = tobool(v.kids[1].value)
+            elseif v.name == "resource_update" then
+                result.resource_update = tobool(v.kids[1].value)
+            elseif v.name == "dirserver" then
+                dirserver = {host=v.attr.host,port=tonumber(v.attr.port)}
+                result.dirserver = dirserver
+            end
+        end
+        return result
+    end
+    --res_base_version
+    local function parseResBase(content)
+        local doc = SLAXML:dom(content)
+        if not doc then return nil end
+        local root = doc.root
+        if not root then return nil end
+        return root.attr.value
+    end
+    --game_ver
+    local function parseGameVer(content)
+        local v = content:split(":")
+        return v[2]
+    end
+    --version.txt
+    local function parseVersiontxt(_content)
+        local content = _content:gsub("\r\n","\n")
+        local fields = content:split("\n")
+        result = {}
+        local v = fields[1]:split(":")
+        result.project_name = v[2]
+        local v = fields[2]:split(":")
+        assert(v[1] == "patches")
+        local vers = v[2]:split("/")
+        result.lates_version = vers[1]
+        result.base_version = vers[2]
+        local count = #fields - 2
+        local patcheslist = {}
+        for i=1,count do
+            local p = fields[i]:split(":")
+            local vs = p[1]:split("-")
+            local info = {
+                begin_v = vs[1],
+                end_v = vs[2],
+                size = p[2],
+            }
+            patcheslist[vs] = info
+        end
+        result.patches_dict = patcheslist
+        return result
+    end
+    --获取更新的patches列表
+    local function get_patheslist(now_version,latest_version, patches_dict)
+        local first_patch = string.format("%s-%s",now_version,latest_version)
+        --优先查找是否可以一次下载
+        if patches_dict[first_patch] then
+            return patches_dict[first_patch]
+        else
+            local function exists(vb,ve)
+                local patch = string.format("%s-%s",vb,ve)
+                return patches_dict[patch] ~= nil
+            end
+
+            local result = {}
+
+            return result
+        end
+    end
 
     function FGameUpdate:_ctor()
         self.m_UpdateSession = nil
         self.m_UpdateFinished = false
+        self.m_EntryConfig = nil
         self.m_LoaclVersion = nil
+        self.m_ResBaseVersion = nil
         self.m_RemoteVersion = nil
+        self.m_PatchesInfo = nil
+        self.m_GameVersion = nil
     end
     function FGameUpdate.Instance()
         if not l_instance then
             l_instance = FGameUpdate.new()
+            l_instance:Init()
         end
         return l_instance
     end
     function FGameUpdate:Init()
-        self.m_UpdateSession = FUpdateSession.Instance()
-        self.m_UpdateSession:InitNetwork()
+        local entry_path = "Configs/entrypoint.xml"
+        local content = ReadFileContent(entry_path)
+        self.m_EntryConfig = parseEntryConfig(content)
+        if not self.m_EntryConfig then
+            error("can not get entrypoint.xml",1)
+        end
 
-        local version_path = "Configs/local-version.xml"
+        local resbase_path = "Configs/res_base_version.xml"
+        local content = ReadFileContent(resbase_path)
+        self.m_ResBaseVersion = parseResBase(content)
+
+        local version_path = "Configs/version.xml"
         local content = ReadFileContent(version_path)
-        print(content)
         self.m_LoaclVersion = parseVersion(content)
         if not self.m_LoaclVersion then
             error("can not get local-version.xml",1)
         end
+         
+        local gameversion = GameUtil.AssetRoot.."/Configs/game_ver"
+        if not GameUtil.IsAssetFileExists(gameversion) then
+           local fp = io.open(gameversion,"wb")
+           fp:write(string.format("version:%s",self.m_ResBaseVersion))
+           fp:close()
+        end
     end
 
     function FGameUpdate:Run()
-        self:Init()
+        self.m_UpdateSession = FUpdateSession.Instance()
+        self.m_UpdateSession:InitNetwork()
+
         self.m_UpdateFinished = false
         local c = coroutine.create(function()
             self:UpdateDirCoroutine()
@@ -69,14 +201,19 @@ do
     end
 
     function FGameUpdate:UpdateDirCoroutine()
+        if not self.m_EntryConfig.resource_update then
+            warn("客户端禁止更新")
+            self.m_UpdateFinished = true
+            return
+        end
         print ("检查更新中。。。")
         self.m_UpdateSession:InitNetwork()
-        self.m_UpdateSession:ConnectTo("127.0.0.1", 8002)
+        self.m_UpdateSession:ConnectTo(self.m_EntryConfig.dirserver.host, self.m_EntryConfig.dirserver.port)
 
         Yield(WaitUntil(function()return self.m_UpdateSession:IsDone() end))
         self.m_UpdateSession:Close()
 
-        if not self.m_UpdateSession.m_DirInfo or #self.m_UpdateSession.m_DirInfo == 0 then
+        if not self.m_UpdateSession.m_VersionInfo or #self.m_UpdateSession.m_VersionInfo == 0 then
             warn("获取更新失败。。。")
             MsgBox(self,StringReader.Get(5),"update",MsgBoxType.MBBT_OK,function(_,ret)
                 if ret == MsgBoxRetT.MBRT_OK then
@@ -87,7 +224,8 @@ do
                 end
             end)
         else
-            self.m_RemoteVersion = parseVersion(self.m_UpdateSession.m_DirInfo) 
+            self.m_PatchesInfo = self.m_UpdateSession.m_PatchesInfo
+            self.m_RemoteVersion = parseVersion(self.m_UpdateSession.m_VersionInfo) 
             self:UpdateCoroutineWithVersion()
         end
     end
@@ -97,15 +235,41 @@ do
             MsgBox(self,StringReader.Get(6),"update",MsgBoxType.MBT_INFO)
         elseif self.m_LoaclVersion.project_name ~= self.m_RemoteVersion.project_name then
             MsgBox(self,StringReader.Get(7),"update",MsgBoxType.MBT_INFO)
-        elseif compareVersionString(self.m_LoaclVersion.resource_version, self.m_RemoteVersion.resource_version) < 0 then
-            warn("localversion:",self.m_LoaclVersion.resource_version, "remote-version",self.m_RemoteVersion.resource_version)
-            MsgBox(self,StringReader.Get(8),"update",MsgBoxType.MBBT_OKCANCEL,function(_,ret)
-                if ret == MsgBoxRetT.MBRT_OK then
-                    warn("准备下载更新资源")
-                    self:Finish()
+        else
+            local versiontxt = GameUtil.AssetRoot.."/Configs/game_ver"
+            local content = GameUtil.ReadAssetFile(versiontxt)
+            local game_version = self.m_ResBaseVersion
+            if content then
+                local txt_version = parseGameVer(LuaHelper.BytesToLuaString(content))
+                if compareVersionString(txt_version, self.m_ResBaseVersion) >0 then
+                    game_version = txt_version
                 end
-            end)
-            --self:Finish()
+            end
+
+            local patchesInfo = parseVersiontxt(self.m_PatchesInfo)
+            if not patchesInfo then
+                MsgBox(self,StringReader.Get(9),"update",MsgBoxType.MBT_INFO)
+                return
+            elseif self.m_LoaclVersion.project_name ~= patchesInfo.project_name then
+                MsgBox(self,StringReader.Get(7),"update",MsgBoxType.MBT_INFO)
+                return
+            elseif compareVersionString(game_version,patchesInfo.base_version) <0 then
+                MsgBox(self,StringReader.Get(10),"update",MsgBoxType.MBT_INFO)
+                return
+            end
+            warn("localversion:",game_version, "remote-version",patchesInfo.lates_version)
+
+            if compareVersionString(game_version, patchesInfo.lates_version) < 0 then 
+                local patches_list = get_patheslist(game_version, patchesInfo.lates_version, patchesInfo.patches_dict)            
+                MsgBox(self,StringReader.Get(8),"update",MsgBoxType.MBBT_OKCANCEL,function(_,ret)
+                    if ret == MsgBoxRetT.MBRT_OK then
+                        warn("准备下载更新资源")
+                        self:Finish()
+                    end
+                end)
+            else
+                self:Finish()
+            end
         end
     end
 

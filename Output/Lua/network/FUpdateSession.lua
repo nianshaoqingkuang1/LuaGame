@@ -9,7 +9,8 @@ local FUpdateSession = FLua.Class("FUpdateSession", FNetwork)
 do
 	function FUpdateSession:_ctor()
 		self.m_netName = "UpdateSession"
-		self.m_DirInfo = nil
+		self.m_VersionInfo = nil
+		self.m_PatchesInfo = nil
 		self.m_isDone = false
 	end
 	function FUpdateSession.Instance()
@@ -28,7 +29,8 @@ do
 	function FUpdateSession:OnGameData(buffer)
         local bytes = buffer:ReadBytesString()
 		local msg = self:BytesToMessage(bytes)
-		self.m_DirInfo = msg.version
+		self.m_VersionInfo = msg.version
+		self.m_PatchesInfo = msg.patches
 		self.m_isDone = true
 	end
 

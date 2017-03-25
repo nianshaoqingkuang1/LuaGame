@@ -5,6 +5,7 @@ module('message_common_pb')
 
 local DIRINFO = protobuf.Descriptor();
 local DIRINFO_VERSION_FIELD = protobuf.FieldDescriptor();
+local DIRINFO_PATCHES_FIELD = protobuf.FieldDescriptor();
 local MESSAGE = protobuf.Descriptor();
 local MESSAGE_MESSAGE_NAME_FIELD = protobuf.FieldDescriptor();
 local MESSAGE_MESSAGE_BODY_FIELD = protobuf.FieldDescriptor();
@@ -20,11 +21,21 @@ DIRINFO_VERSION_FIELD.default_value = ""
 DIRINFO_VERSION_FIELD.type = 12
 DIRINFO_VERSION_FIELD.cpp_type = 9
 
+DIRINFO_PATCHES_FIELD.name = "patches"
+DIRINFO_PATCHES_FIELD.full_name = "message_common.DirInfo.patches"
+DIRINFO_PATCHES_FIELD.number = 2
+DIRINFO_PATCHES_FIELD.index = 1
+DIRINFO_PATCHES_FIELD.label = 1
+DIRINFO_PATCHES_FIELD.has_default_value = false
+DIRINFO_PATCHES_FIELD.default_value = ""
+DIRINFO_PATCHES_FIELD.type = 12
+DIRINFO_PATCHES_FIELD.cpp_type = 9
+
 DIRINFO.name = "DirInfo"
 DIRINFO.full_name = "message_common.DirInfo"
 DIRINFO.nested_types = {}
 DIRINFO.enum_types = {}
-DIRINFO.fields = {DIRINFO_VERSION_FIELD}
+DIRINFO.fields = {DIRINFO_VERSION_FIELD, DIRINFO_PATCHES_FIELD}
 DIRINFO.is_extendable = false
 DIRINFO.extensions = {}
 MESSAGE_MESSAGE_NAME_FIELD.name = "message_name"

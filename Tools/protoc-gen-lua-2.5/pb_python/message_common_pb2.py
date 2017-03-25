@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='message_common.proto',
   package='message_common',
-  serialized_pb=_b('\n\x14message_common.proto\x12\x0emessage_common\"\x1a\n\x07\x44irInfo\x12\x0f\n\x07version\x18\x01 \x01(\x0c\"5\n\x07Message\x12\x14\n\x0cmessage_name\x18\x01 \x01(\t\x12\x14\n\x0cmessage_body\x18\x02 \x01(\x0c')
+  serialized_pb=_b('\n\x14message_common.proto\x12\x0emessage_common\"+\n\x07\x44irInfo\x12\x0f\n\x07version\x18\x01 \x01(\x0c\x12\x0f\n\x07patches\x18\x02 \x01(\x0c\"5\n\x07Message\x12\x14\n\x0cmessage_name\x18\x01 \x01(\t\x12\x14\n\x0cmessage_body\x18\x02 \x01(\x0c')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -39,6 +39,13 @@ _DIRINFO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='patches', full_name='message_common.DirInfo.patches', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -51,7 +58,7 @@ _DIRINFO = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=40,
-  serialized_end=66,
+  serialized_end=83,
 )
 
 
@@ -87,8 +94,8 @@ _MESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=68,
-  serialized_end=121,
+  serialized_start=85,
+  serialized_end=138,
 )
 
 DESCRIPTOR.message_types_by_name['DirInfo'] = _DIRINFO
