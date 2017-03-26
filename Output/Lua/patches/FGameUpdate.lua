@@ -61,6 +61,7 @@ do
                 result.resource = {
                     package_url = v.attr.package_url,
                     ext = v.attr.ext,
+                    mini_version = v.attr.mini_version,
                 }
             end
         end
@@ -81,7 +82,7 @@ do
             elseif v.name == "resource_update" then
                 result.resource_update = tobool(v.kids[1].value)
             elseif v.name == "dirserver" then
-                dirserver = {host=v.attr.host,port=tonumber(v.attr.port)}
+                local dirserver = {host=v.attr.host,port=tonumber(v.attr.port)}
                 result.dirserver = dirserver
             end
         end
@@ -104,42 +105,81 @@ do
     local function parseVersiontxt(_content)
         local content = _content:gsub("\r\n","\n")
         local fields = content:split("\n")
-        result = {}
+        local result = {}
         local v = fields[1]:split(":")
         result.project_name = v[2]
-        local v = fields[2]:split(":")
+        v = fields[2]:split(":")
         assert(v[1] == "patches")
         local vers = v[2]:split("/")
         result.lates_version = vers[1]
         result.base_version = vers[2]
-        local count = #fields - 2
+        local count = #fields
         local patcheslist = {}
-        for i=1,count do
+        local patch_count = 0
+        for i=3,count do
             local p = fields[i]:split(":")
             local vs = p[1]:split("-")
             local info = {
                 begin_v = vs[1],
                 end_v = vs[2],
-                size = p[2],
+                size = tonumber(p[2]),
             }
-            patcheslist[vs] = info
+            patch_count = patch_count + 1
+            patcheslist[p[1]] = info
         end
         result.patches_dict = patcheslist
+        result.patches_count = patch_count
         return result
     end
     --获取更新的patches列表
-    local function get_patheslist(now_version,latest_version, patches_dict)
+    local function get_patheslist(now_version,latest_version, patches_dict,patches_count)
         local first_patch = string.format("%s-%s",now_version,latest_version)
         --优先查找是否可以一次下载
         if patches_dict[first_patch] then
-            return patches_dict[first_patch]
+            return {patches_dict[first_patch],}
         else
             local function exists(vb,ve)
                 local patch = string.format("%s-%s",vb,ve)
                 return patches_dict[patch] ~= nil
             end
+            local function find(vb,ve)
+                if exists(vb, ve) then return ve end
+                local lastValid = nil
+                local nextVer = nextVersionStr(vb)
+                while compareVersionString(nextVer, ve) <0 do
+                    if exists(vb, nextVer) then
+                        lastValid = nextVer
+                    end
+                    nextVer = nextVersionStr(nextVer)
+                end
+                return lastValid
+            end
 
             local result = {}
+            local vb = now_version
+            local vp = find(vb,latest_version)
+            if not vp then
+                vb = prevVersionStr(vb)
+                vp = find(vb,latest_version)
+                while not vp and compareVersionString(vb,"0.0.0") >0 do
+                    vb = prevVersionStr(vb)
+                    vp = find(vb,latest_version)
+                end
+            end
+            if vp then
+                while vp do
+                    local patch = string.format("%s-%s",vb,vp)
+                    result[#result+1] = patches_dict[patch]
+                    vb = vp
+                    vp = find(vp,latest_version)
+                end
+            end
+            --按照更新顺序排序
+            table.sort(result,function(a,b)
+                local patcha = string.format("%s-%s",a.begin_v,a.end_v)
+                local patchb = string.format("%s-%s",b.begin_v,b.end_v)
+                return patcha < patchb
+            end)
 
             return result
         end
@@ -164,23 +204,23 @@ do
     end
     function FGameUpdate:Init()
         local entry_path = "Configs/entrypoint.xml"
-        local content = ReadFileContent(entry_path)
+        local content = _G.ReadFileContent(entry_path)
         self.m_EntryConfig = parseEntryConfig(content)
         if not self.m_EntryConfig then
             error("can not get entrypoint.xml",1)
         end
 
         local resbase_path = "Configs/res_base_version.xml"
-        local content = ReadFileContent(resbase_path)
+        content = ReadFileContent(resbase_path)
         self.m_ResBaseVersion = parseResBase(content)
 
         local version_path = "Configs/version.xml"
-        local content = ReadFileContent(version_path)
+        content = ReadFileContent(version_path)
         self.m_LoaclVersion = parseVersion(content)
         if not self.m_LoaclVersion then
             error("can not get local-version.xml",1)
         end
-         
+
         local gameversion = GameUtil.AssetRoot.."/Configs/game_ver"
         if not GameUtil.IsAssetFileExists(gameversion) then
            local fp = io.open(gameversion,"wb")
@@ -260,30 +300,57 @@ do
             warn("localversion:",game_version, "remote-version",patchesInfo.lates_version)
 
             if compareVersionString(game_version, patchesInfo.lates_version) < 0 then 
-                local patches_list = get_patheslist(game_version, patchesInfo.lates_version, patchesInfo.patches_dict)            
-                MsgBox(self,StringReader.Get(8),"update",MsgBoxType.MBBT_OKCANCEL,function(_,ret)
+                local patches_list = get_patheslist(game_version, patchesInfo.lates_version, patchesInfo.patches_dict,patchesInfo.patches_count)
+                PrintTable(patches_list)
+                local updateSize = self:CalcDownloadSize(patches_list)
+                local boxType = compareVersionString(game_version, self.m_RemoteVersion.resource.mini_version) >= 0 and MsgBoxType.MBBT_OKCANCEL or MsgBoxType.MBBT_OK
+                MsgBox(self,StringReader.Get(8),"update",boxType,function(_,ret)
                     if ret == MsgBoxRetT.MBRT_OK then
-                        warn("准备下载更新资源")
-                        GameUtil.DownLoad("http://localhost:8003/patches/pynet.rar","/Volumes/SHARED/Downloads/py.rar",true,true,nil,function(a,b,c)
-                            print("progress:",a,b,c)
-                        end,function(succeess, req, resp, complete_param)
-                     		print(req,resp)
-                     		if not req.Exception then
-                     			if resp.IsSuccess then
-                     				print("download completed.. now unzip")
-                     				--tmpfile=this.AssetRoot.."/tmp.zip"
-                     			end
-                     	    else 
-                     	    	print("DownLoad file err",resp)
-                     		end
-                             self:Finish()
-                     	end)
+                        warn("准备下载更新资源,更新大小：",updateSize)
+                        self:DownloadResource(patches_list)
                     end
                 end)
             else
                 self:Finish()
             end
         end
+    end
+
+    function FGameUpdate:CalcDownloadSize(patch_list) 
+        local size = 0
+        for _,v in ipairs(patch_list) do
+            size = size + v.size
+        end
+        return size
+    end
+
+    function FGameUpdate:DownloadResource(patch_list)
+        --下载目录
+        local patches_dir = GameUtil.AssetRoot .. "/patches"
+        GameUtil.CreateDirectory(patches_dir)
+
+        local function download(patchinfo, progress, finished)
+            local url = self.m_RemoteVersion.resource.package_url .. string.format("%s-%s",patchinfo.begin_v,patchinfo.end_v) .. self.m_RemoteVersion.resource.ext
+            local filename = patches_dir .. "/" .. string.format("%s-%s",patchinfo.begin_v,patchinfo.end_v) .. self.m_RemoteVersion.resource.ext
+            GameUtil.DownLoad(url, filename,true,true,nil,progress,finished)
+        end
+
+        local c = coroutine.create(function()
+            for _,patchinfo in ipairs(patch_list) do
+                local curFinished = false
+                download(patchinfo,
+                function(a,b,c)
+                    print(a,b,c)
+                end,
+                function(succeess,req,resp,complete_param)
+                    curFinished = true
+                end)
+                Yield(WaitUntil(function()return curFinished end))
+            end
+
+            self:Finish()
+        end)
+        coroutine.resume(c)
     end
 
     function FGameUpdate:Finish()

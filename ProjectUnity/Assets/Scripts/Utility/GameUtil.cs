@@ -408,9 +408,9 @@ public class GameUtil
     //下载HTTP文件
     public static void DownLoad(string SrcFilePath, string SaveFilePath, bool bGet, bool keepAlive,object complete_param, LuaFunction progressHander, LuaFunction completeHander)
     {
-        
         var request = new HTTPRequest(new Uri(SrcFilePath), bGet ? HTTPMethods.Get : HTTPMethods.Post, keepAlive, (req, resp) =>
         {
+			FileStream fs = null;
             List<byte[]> fragments = null;
             string status = "";
             switch (req.State)
@@ -420,7 +420,7 @@ public class GameUtil
                         fragments = resp.GetStreamedFragments();
                         if (fragments != null && fragments.Count > 0)
                         {
-                            FileStream fs = new FileStream(SaveFilePath, FileMode.Append);
+							if(fs == null) fs = new FileStream(SaveFilePath, FileMode.Append);
                             foreach (byte[] data in fragments)
                                 fs.Write(data, 0, data.Length);
                         }
@@ -430,13 +430,18 @@ public class GameUtil
                     {
                         if (resp.IsSuccess)
                         {
+                        	if (progressHander != null)
+				            {
+				                progressHander.Dispose();
+				            }
                             // Save any remaining fragments
                             fragments = resp.GetStreamedFragments();
                             if (fragments != null && fragments.Count > 0)
                             {
-                                FileStream fs = new FileStream(SaveFilePath, FileMode.Append);
+								if(fs == null) fs = new FileStream(SaveFilePath, FileMode.Append);
                                 foreach (byte[] data in fragments)
                                     fs.Write(data, 0, data.Length);
+								fs.Close();
                             }
                             if(resp.IsStreamingFinished)
                             {
@@ -452,6 +457,12 @@ public class GameUtil
                         }
                         else
                         {
+							if(fs != null) fs.Close();
+							
+                        	if (progressHander != null)
+				            {
+				                progressHander.Dispose();
+				            }
                             status = string.Format("Request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
                                                             resp.StatusCode,
                                                             resp.Message,
@@ -468,6 +479,11 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.Error:
                     {
+						if(fs != null) fs.Close();
+                    	if (progressHander != null)
+			            {
+			                progressHander.Dispose();
+			            }
                         status = "Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception");
                         if (completeHander != null)
                         {
@@ -480,6 +496,11 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.Aborted:
                     {
+						if(fs != null) fs.Close();
+                    	if (progressHander != null)
+			            {
+			                progressHander.Dispose();
+			            }
                         status = "Request Aborted!";
                         if (completeHander != null)
                         {
@@ -493,6 +514,11 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.ConnectionTimedOut:
                     {
+						if(fs != null) fs.Close();
+                    	if (progressHander != null)
+			            {
+			                progressHander.Dispose();
+			            }
                         status = "Connection Timed Out!";
                         if (completeHander != null)
                         {
@@ -505,6 +531,11 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.TimedOut:
                     {
+						if(fs != null) fs.Close();
+                    	if (progressHander != null)
+			            {
+			                progressHander.Dispose();
+			            }
                         status = "Processing the request Timed Out!";
                         if (completeHander != null)
                         {
@@ -513,9 +544,9 @@ public class GameUtil
                         }
                         else
                             LogUtil.LogWarning(status);
+
                     }
                     break;
-
             }
         });
         request.OnProgress = (req, downloaded, length) =>
@@ -524,9 +555,13 @@ public class GameUtil
             {
                 double pg = Math.Round((float)downloaded / (float)length, 2);
                 progressHander.call(pg, downloaded,length);
-                progressHander.Dispose();
             }
         };
+
+		if (File.Exists (SaveFilePath)) {
+			File.Delete (SaveFilePath);
+		}
+
         request.UseStreaming = true;
         request.StreamFragmentSize = 1 * 1024 * 1024; // 1 megabyte
         request.DisableCache = true; // already saving to a file, so turn off caching

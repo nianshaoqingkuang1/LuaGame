@@ -1,26 +1,27 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SLua/Helper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Utility/GameUtil.cs">
     <Files>
-      <File FileName="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" Line="71" Column="54" />
+      <File FileName="Assets/Scripts/EntryPoint.cs" Line="21" Column="18" />
+      <File FileName="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" Line="82" Column="31" />
       <File FileName="Assets/SLua/LuaObject.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="84" Column="27" />
-      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="93" Column="3" />
+      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="33" Column="18" />
       <File FileName="Assets/SLua/Coroutine.cs" Line="1" Column="1" />
       <File FileName="Assets/LuaInterface/LuaObject/Unity/LuaSystem_Func_1_bool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="363" Column="39" />
+      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="446" Column="88" />
       <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/LuaState.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Utility/PersistentHumbleSingleton.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/LuaSvr.cs" Line="1" Column="1" />
-      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_GameUtil.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/ObjectCache.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/LuaVarObject.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/Helper.cs" Line="439" Column="43" />
       <File FileName="Assets/LuaInterface/LuaCustom/Lua_FGame_ByteBuffer_2.cs" Line="1" Column="1" />
-      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_FGame_ByteBuffer.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/LuaObject_basetype.cs" Line="1" Column="1" />
       <File FileName="Assets/SLua/LuaDLL.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/MainThreadTask.cs" Line="49" Column="18" />
+      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_MainThreadTask.cs" Line="38" Column="33" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -3,6 +3,6 @@
 <app name="luagame">
     <!--program-->
     <program method="open_url" action="http://www.baidu.com" m5d=""/>
-    <!--resource-->
-    <resource package_url="http://127.0.0.1/patches/" ext=".zip"/>
+    <!--resource: package_url：更新下载地址;mini_version：最低资源版本号，低于此版本必须更新-->
+    <resource package_url="http://127.0.0.1:8003/patches/" ext=".zip" mini_version="0.0.1"/>
 </app>

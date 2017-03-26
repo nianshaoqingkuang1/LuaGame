@@ -10,7 +10,7 @@ class DirSession(TCPConnectionDelegage):
     def __init__(self):
         TCPConnectionDelegage.__init__(self)
     def on_receive(self, data):
-        logger().i("receive from %s, %s", str(self.address),pb_helper.debug_bytes(data))
+        logger().i("receive from %s", str(self.address))
         msg = pb_helper.BytesToMessage(data)
         if isinstance(msg, message_common_pb2.DirInfo):
             self._send_dirinfo()
@@ -30,7 +30,7 @@ class DirSession(TCPConnectionDelegage):
             msg.patches = data
             fin.close()
         buff = pb_helper.MessageToSendBytes(msg)
-        logger().i("send dirinfo to %s, %s", str(self.address), pb_helper.debug_bytes(buff))
+        logger().i("send dirinfo to %s", str(self.address))
         self.send(buff)
     def on_write_complete(self):
         #self.close()

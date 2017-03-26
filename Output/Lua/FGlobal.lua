@@ -124,16 +124,21 @@ function Table2String(tab)
     local function internal(tab, str, indent)
         for k,v in pairs(tab) do
             if type(v) == "table" then
-                table.insert(str, indent..tostring(k)..":\n")
+                table.insert(str, indent.."["..tostring(k).."]="..":\n")
                 internal(v, str, indent..' ')
             else
-                table.insert(str, indent..tostring(k)..": "..tostring(v).."\n")
+                table.insert(str, indent..tostring(k).."="..tostring(v).."\n")
             end
         end
     end
 
     internal(tab, str, '')
     return table.concat(str, '')
+end
+
+function PrintTable(t)
+	local str = Table2String(t)
+	print(str)
 end
 
 function string:split(sep)
