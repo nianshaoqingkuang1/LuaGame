@@ -84,7 +84,7 @@ namespace UnZipUtil
                     if (fileName != string.Empty)
                     {
 						FileStream streamWriter = File.Create(Path.Combine(directory, theEntry.Name));
-                        LogUtil.Log("-------------->Begin UnZip {0},Size:{1}", theEntry.Name,theEntry.Size);
+                        //LogUtil.Log("-------------->Begin UnZip {0},Size:{1}", theEntry.Name,theEntry.Size);
                         int size = 2048;
                         byte[] data = new byte[2048];
                         while (true)
@@ -107,7 +107,7 @@ namespace UnZipUtil
 
                         streamWriter.Close();
 						n ++;
-						LogUtil.Log("-------------->End UnZip {0}, {1}/{2}", theEntry.Name, n, count);
+						//LogUtil.Log("-------------->End UnZip {0}, {1}/{2}", theEntry.Name, n, count);
                     }
                 }
                 s.Close();

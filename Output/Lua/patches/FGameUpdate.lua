@@ -1,5 +1,6 @@
 local FUpdateSession = require "network.FUpdateSession"
 local SLAXML = require "lib.SLAXML.slaxdom"
+local FUpdateUI = require "patches.FUpdateUI"
 local FGameUpdate = FLua.Class("FGameUpdate")
 local l_instance = nil
 do
@@ -233,6 +234,8 @@ do
         self.m_UpdateSession = FUpdateSession.Instance()
         self.m_UpdateSession:InitNetwork()
 
+        FUpdateUI.Instance():ShowPanel(true)
+
         self.m_UpdateFinished = false
         local c = coroutine.create(function()
             self:UpdateDirCoroutine()
@@ -298,8 +301,13 @@ do
                 return
             end
             warn("localversion:",game_version, "remote-version",patchesInfo.lates_version)
-
+            Yield(WaitUntil(function()return FUpdateUI.Instance():IsActive() end))
+            FUpdateUI.Instance():SetLoaclVersion(game_version)
+            FUpdateUI.Instance():SetRemoteVersion(patchesInfo.lates_version)
+            FUpdateUI.Instance():SetProgress(0)
+            FUpdateUI.Instance():SetTip(StringReader.Get(11))
             if compareVersionString(game_version, patchesInfo.lates_version) < 0 then 
+                FUpdateUI.Instance():SetTip(StringReader.Get(14))
                 local patches_list = get_patheslist(game_version, patchesInfo.lates_version, patchesInfo.patches_dict,patchesInfo.patches_count)
                 PrintTable(patches_list)
                 local updateSize = self:CalcDownloadSize(patches_list)
@@ -329,24 +337,39 @@ do
         local patches_dir = GameUtil.AssetRoot .. "/patches"
         GameUtil.CreateDirectory(patches_dir)
 
-        local function download(patchinfo, progress, finished)
+        local function downloadinfo(patchinfo)
             local url = self.m_RemoteVersion.resource.package_url .. string.format("%s-%s",patchinfo.begin_v,patchinfo.end_v) .. self.m_RemoteVersion.resource.ext
             local filename = patches_dir .. "/" .. string.format("%s-%s",patchinfo.begin_v,patchinfo.end_v) .. self.m_RemoteVersion.resource.ext
-            GameUtil.DownLoad(url, filename,true,true,nil,progress,finished)
+            return url, filename
         end
 
         local c = coroutine.create(function()
             for _,patchinfo in ipairs(patch_list) do
                 local curFinished = false
-                download(patchinfo,
+                local url,filename = downloadinfo(patchinfo)
+                FUpdateUI.Instance():SetProgress(0)
+                FUpdateUI.Instance():SetTip(StringReader.Get(12))
+                GameUtil.DownLoad(url,filename,true,true,nil,
                 function(a,b,c)
-                    print(a,b,c)
+                    print("下载进度：",b/c*100 .. "%")
+                    FUpdateUI.Instance():SetProgress(b/c)
                 end,
                 function(succeess,req,resp,complete_param)
+                    print("下载完成，开始解压")
+                    FUpdateUI.Instance():SetProgress(0)
+                    FUpdateUI.Instance():SetTip(StringReader.Get(13))
+                    GameUtil.UnZip(filename, patches_dir.."/temp","", function(name,pro,size,length)
+                        --print("unzip:",name,pro,size,length)
+                        FUpdateUI.Instance():SetProgress(size/length)
+                    end)
                     curFinished = true
                 end)
                 Yield(WaitUntil(function()return curFinished end))
             end
+            FUpdateUI.Instance():SetProgress(1)
+            FUpdateUI.Instance():SetTip(StringReader.Get(15))
+            Yield(WaitForEndOfFrame())
+            FUpdateUI.Instance():DestroyPanel()
 
             self:Finish()
         end)

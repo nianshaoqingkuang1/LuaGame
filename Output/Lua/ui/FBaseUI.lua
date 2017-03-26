@@ -103,7 +103,7 @@ do
 	end
 
 	function FBaseUI:IsActive()
-		if not self.m_panel or self.m_panel.isnil then
+		if not self.m_panel or self.m_panel.isNil then
 			return false
 		else
 			return self.m_panel.activeSelf

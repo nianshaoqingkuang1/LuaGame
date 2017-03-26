@@ -568,6 +568,17 @@ public class GameUtil
         request.Send();
     }
 
+	public static void UnZip(string zipFileName,string directory,string password = null,LuaFunction handle = null)
+	{
+		UnZipUtil.XSharpUnZip.UnZipDirectory(zipFileName,directory,password,(entryName,progress,streamSize,entryLength) =>{
+			if(handle != null)
+				handle.call(entryName,progress,streamSize,entryLength);
+		});
+
+		if (handle != null)
+			handle.Dispose ();
+	}
+
     
     public static void ReStart(LuaFunction cb)
     {

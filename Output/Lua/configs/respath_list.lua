@@ -7,6 +7,7 @@ local respath_list =
 	ServerListUI = "Assets/Arts/Prefab/ServerListUI.prefab",
 	WaitingUI = "Assets/Arts/Prefab/WaitingUI.prefab",
 	BackgroundMusic = "Assets/Arts/Sound/background.mp3",
+	UpdateUI = "Assets/Arts/Prefab/UpdateUI.prefab",
 }
 
 return respath_list
