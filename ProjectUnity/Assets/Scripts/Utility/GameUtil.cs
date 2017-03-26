@@ -408,9 +408,11 @@ public class GameUtil
     //下载HTTP文件
     public static void DownLoad(string SrcFilePath, string SaveFilePath, bool bGet, bool keepAlive,object complete_param, LuaFunction progressHander, LuaFunction completeHander)
     {
+		string tmpPath = SaveFilePath + ".tmp";
+		if (File.Exists (tmpPath)) File.Delete (tmpPath);
+		
         var request = new HTTPRequest(new Uri(SrcFilePath), bGet ? HTTPMethods.Get : HTTPMethods.Post, keepAlive, (req, resp) =>
         {
-			FileStream fs = null;
             List<byte[]> fragments = null;
             string status = "";
             switch (req.State)
@@ -420,9 +422,10 @@ public class GameUtil
                         fragments = resp.GetStreamedFragments();
                         if (fragments != null && fragments.Count > 0)
                         {
-							if(fs == null) fs = new FileStream(SaveFilePath, FileMode.Append);
+							FileStream fs = new FileStream(tmpPath, FileMode.Append);
                             foreach (byte[] data in fragments)
                                 fs.Write(data, 0, data.Length);
+							fs.Close();
                         }
                     }
                     break;
@@ -438,13 +441,17 @@ public class GameUtil
                             fragments = resp.GetStreamedFragments();
                             if (fragments != null && fragments.Count > 0)
                             {
-								if(fs == null) fs = new FileStream(SaveFilePath, FileMode.Append);
+								FileStream fs = new FileStream(tmpPath, FileMode.Append);
                                 foreach (byte[] data in fragments)
                                     fs.Write(data, 0, data.Length);
 								fs.Close();
                             }
                             if(resp.IsStreamingFinished)
                             {
+								if (File.Exists (SaveFilePath)) File.Delete (SaveFilePath);
+								FileInfo fi = new FileInfo(tmpPath);
+								fi.MoveTo(SaveFilePath);
+
                                 status = "Streaming finished!";
                                 if (completeHander != null)
                                 {
@@ -457,8 +464,6 @@ public class GameUtil
                         }
                         else
                         {
-							if(fs != null) fs.Close();
-							
                         	if (progressHander != null)
 				            {
 				                progressHander.Dispose();
@@ -479,7 +484,6 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.Error:
                     {
-						if(fs != null) fs.Close();
                     	if (progressHander != null)
 			            {
 			                progressHander.Dispose();
@@ -496,7 +500,6 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.Aborted:
                     {
-						if(fs != null) fs.Close();
                     	if (progressHander != null)
 			            {
 			                progressHander.Dispose();
@@ -514,7 +517,6 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.ConnectionTimedOut:
                     {
-						if(fs != null) fs.Close();
                     	if (progressHander != null)
 			            {
 			                progressHander.Dispose();
@@ -531,7 +533,6 @@ public class GameUtil
                     break;
                 case HTTPRequestStates.TimedOut:
                     {
-						if(fs != null) fs.Close();
                     	if (progressHander != null)
 			            {
 			                progressHander.Dispose();
@@ -558,12 +559,9 @@ public class GameUtil
             }
         };
 
-		if (File.Exists (SaveFilePath)) {
-			File.Delete (SaveFilePath);
-		}
-
+		
         request.UseStreaming = true;
-        request.StreamFragmentSize = 1 * 1024 * 1024; // 1 megabyte
+		request.StreamFragmentSize = HTTPResponse.MinBufferSize; //
         request.DisableCache = true; // already saving to a file, so turn off caching
         request.Send();
     }

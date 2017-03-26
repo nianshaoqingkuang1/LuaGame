@@ -88,9 +88,9 @@ namespace UnZipUtil
                             File.Delete (fileEntryPath);
                         }
 						FileStream streamWriter = File.Create(fileEntryPath);
-                        //LogUtil.Log("-------------->Begin UnZip {0},Size:{1}", theEntry.Name,theEntry.Size);
-                        int size = 2048;
-                        byte[] data = new byte[2048];
+                        LogUtil.Log("-------------->Begin UnZip {0},Size:{1}", theEntry.Name,theEntry.Size);
+                        int size = 1024*4;
+						byte[] data = new byte[size];
                         while (true)
                         {
                             size = s.Read(data, 0, data.Length);
@@ -111,7 +111,7 @@ namespace UnZipUtil
 
                         streamWriter.Close();
 						n ++;
-						//LogUtil.Log("-------------->End UnZip {0}, {1}/{2}", theEntry.Name, n, count);
+						LogUtil.Log("-------------->End UnZip {0}, {1}/{2}", theEntry.Name, n, count);
                     }
                 }
                 s.Close();

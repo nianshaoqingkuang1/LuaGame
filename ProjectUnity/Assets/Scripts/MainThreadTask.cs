@@ -11,8 +11,10 @@ using SLua;
 [CustomLuaClass]
 public class MainThreadTask : MonoBehaviour
 {
+	private static MainThreadTask instance;
 	void Awake()
 	{
+		instance = this;
 		DontDestroyOnLoad (gameObject);
 	}
 	/// <summary>
@@ -26,6 +28,18 @@ public class MainThreadTask : MonoBehaviour
 		var obj = new GameObject("MainThreadTask");
 		obj.AddComponent<MainThreadTask>();
 		m_inited = true;
+	}
+
+	static IEnumerator _InnerCall_(Action action)
+	{
+		action ();
+		yield break;
+	}
+	public static void RunChildAsync(Action action)
+	{
+		if (!m_inited)
+			Init ();
+		instance.StartCoroutine (_InnerCall_ (action));
 	}
 
 	public static void RunInMainThread(Action action)

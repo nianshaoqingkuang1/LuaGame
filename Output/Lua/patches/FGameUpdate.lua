@@ -369,6 +369,7 @@ do
                             --print("unzip:",name,pro,size,length)
                             FUpdateUI.Instance():SetProgress(size/length)
                         end)
+                        curFinished = true
                         --TODO:此处应写入版本信息
                         --TODO:删除已经成功下载的
                         table.remove(patch_list, 1)
@@ -381,16 +382,16 @@ do
                             end
                         end)
                     end
-                    curFinished = true
                 end)
-                Yield(WaitUntil(function()return curFinished end))
                 if bFailed then
                     break
                 end
+                Yield(WaitUntil(function()return curFinished end))
             end
             if not bFailed then
                 FUpdateUI.Instance():SetProgress(1)
                 FUpdateUI.Instance():SetTip(StringReader.Get(15))
+                Yield(WaitForEndOfFrame())
                 Yield(WaitForEndOfFrame())
                 FUpdateUI.Instance():DestroyPanel()
 
