@@ -83,7 +83,11 @@ namespace UnZipUtil
 
                     if (fileName != string.Empty)
                     {
-						FileStream streamWriter = File.Create(Path.Combine(directory, theEntry.Name));
+                        string fileEntryPath = Path.Combine(directory, theEntry.Name);
+                        if (File.Exists (fileEntryPath)) {
+                            File.Delete (fileEntryPath);
+                        }
+						FileStream streamWriter = File.Create(fileEntryPath);
                         //LogUtil.Log("-------------->Begin UnZip {0},Size:{1}", theEntry.Name,theEntry.Size);
                         int size = 2048;
                         byte[] data = new byte[2048];

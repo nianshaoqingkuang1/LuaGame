@@ -71,9 +71,9 @@ function AsyncLoadArray(assetBundleName, assetNames, cb)
 	FAssetBundleUtil.Instance():AsyncLoad(assetBundleName,assetNames,cb)
 end
 
-function UnloadAssetBundle(assetBundleName)
+function UnloadAssetBundle(assetBundleName,unload)
 	local FAssetBundleUtil = require "utility.FAssetBundleUtil"
-	FAssetBundleUtil.Instance():UnloadAssetBundle(assetBundleName)
+	FAssetBundleUtil.Instance():UnloadAssetBundle(assetBundleName,unload)
 end
 
 function MsgBox(hwnd,content,title,mask,click_cb)

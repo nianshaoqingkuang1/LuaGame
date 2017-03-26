@@ -198,7 +198,7 @@ namespace FGame
 				url = GameUtil.MakePathForWWW(BaseDownloadingURL) + "/" + abName;
 			LogUtil.Log (string.Format ("load asset {0}", url));
 			WWW download = null;
-			byte[] buff = null;
+
 			if (type == typeof(AssetBundleManifest))
 				download = new WWW(url);
 			else {
@@ -258,6 +258,10 @@ namespace FGame
 		/// <param name="abName"></param>
 		/// <param name="isThorough"></param>
 		public void UnloadAssetBundle(string abName, bool isThorough = false) {
+			if (abName != ManifestName && !abName.EndsWith (BundleExt)) {
+				abName = abName.ToLower ();
+				abName += BundleExt;
+			}
 			LogUtil.Log(m_LoadedAssetBundles.Count + " assetbundle(s) in memory before unloading " + abName);
 			UnloadAssetBundleInternal(abName, isThorough);
 			UnloadDependencies(abName, isThorough);

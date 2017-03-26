@@ -42,6 +42,7 @@ do
 		self.m_tip = self:FindChildObj(OBJPATH.tip)
 		self.m_localversion = self:FindChildObj(OBJPATH.localversion)
 		self.m_remoteversion = self:FindChildObj(OBJPATH.remoteversion)
+		self.m_progress.interactable = false
 
 		self:SetLoaclVersion(self.localverionVal)
 		self:SetRemoteVersion(self.remoteverionVal)

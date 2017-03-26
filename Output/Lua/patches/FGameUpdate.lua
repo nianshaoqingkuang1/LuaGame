@@ -343,8 +343,14 @@ do
             return url, filename
         end
 
+        local isDownFinished = false
         local c = coroutine.create(function()
-            for _,patchinfo in ipairs(patch_list) do
+            local bFailed = false
+            while not bFailed do
+                local patchinfo = patch_list[1]
+                if not patchinfo then
+                    break
+                end
                 local curFinished = false
                 local url,filename = downloadinfo(patchinfo)
                 FUpdateUI.Instance():SetProgress(0)
@@ -355,23 +361,41 @@ do
                     FUpdateUI.Instance():SetProgress(b/c)
                 end,
                 function(succeess,req,resp,complete_param)
-                    print("下载完成，开始解压")
-                    FUpdateUI.Instance():SetProgress(0)
-                    FUpdateUI.Instance():SetTip(StringReader.Get(13))
-                    GameUtil.UnZip(filename, patches_dir.."/temp","", function(name,pro,size,length)
-                        --print("unzip:",name,pro,size,length)
-                        FUpdateUI.Instance():SetProgress(size/length)
-                    end)
+                    if succeess then
+                        print("下载完成，开始解压")
+                        FUpdateUI.Instance():SetProgress(0)
+                        FUpdateUI.Instance():SetTip(StringReader.Get(13))
+                        GameUtil.UnZip(filename, patches_dir.."/temp","", function(name,pro,size,length)
+                            --print("unzip:",name,pro,size,length)
+                            FUpdateUI.Instance():SetProgress(size/length)
+                        end)
+                        --TODO:此处应写入版本信息
+                        --TODO:删除已经成功下载的
+                        table.remove(patch_list, 1)
+                    else
+                        bFailed = true
+                        print("下载失败。")
+                        MsgBox(self,StringReader.Get(16),"update",MsgBoxType.MBBT_OK,function(_,ret)
+                            if ret == MsgBoxRetT.MBRT_OK then
+                                self:DownloadResource(patch_list)
+                            end
+                        end)
+                    end
                     curFinished = true
                 end)
                 Yield(WaitUntil(function()return curFinished end))
+                if bFailed then
+                    break
+                end
             end
-            FUpdateUI.Instance():SetProgress(1)
-            FUpdateUI.Instance():SetTip(StringReader.Get(15))
-            Yield(WaitForEndOfFrame())
-            FUpdateUI.Instance():DestroyPanel()
+            if not bFailed then
+                FUpdateUI.Instance():SetProgress(1)
+                FUpdateUI.Instance():SetTip(StringReader.Get(15))
+                Yield(WaitForEndOfFrame())
+                FUpdateUI.Instance():DestroyPanel()
 
-            self:Finish()
+                self:Finish()
+            end
         end)
         coroutine.resume(c)
     end

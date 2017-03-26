@@ -28,12 +28,12 @@ do
 		end)
 	end
 
-	function FAssetBundleUtil:UnloadAssetBundle(assetBundleName)
+	function FAssetBundleUtil:UnloadAssetBundle(assetBundleName,unload)
 		if not assetBundleName or assetBundleName:len() == 0 then 
 			return
 		end
 
-		self.m_AssetsMgr:UnloadAssetBundle(assetBundleName, true)
+		self.m_AssetsMgr:UnloadAssetBundle(assetBundleName, unload)
 	end
 end
 
