@@ -556,10 +556,15 @@ namespace SLua
         internal LuaFunction index_func;
         const string DelgateTable = "__LuaDelegate";
         bool openedSluaLib = false;
-		public bool isMainThread()
-		{
-			return System.Threading.Thread.CurrentThread.ManagedThreadId == mainThread;
-		}
+
+        public bool isMainThread()
+        {
+            return System.Threading.Thread.CurrentThread.ManagedThreadId == mainThread;
+        }
+
+#if !SLUA_STANDALONE
+        internal LuaSvrGameObject lgo;
+#endif
 
         static public LuaState get(IntPtr l)
         {
@@ -737,7 +742,47 @@ return index
             index_func = (LuaFunction)doString(indexfun);
 
             setupPushVar();
-			pcall(L, init);
+
+            pcall(L, init);
+
+            createGameObject();
+        }
+
+        void createGameObject()
+        {
+#if !SLUA_STANDALONE
+            if (lgo == null
+#if UNITY_EDITOR
+                && UnityEditor.EditorApplication.isPlaying
+#endif
+            )
+            {
+                GameObject go = new GameObject("LuaSvrProxy");
+                lgo = go.AddComponent<LuaSvrGameObject>();
+                GameObject.DontDestroyOnLoad(go);
+                lgo.onUpdate = this.tick;
+                lgo.state = this;
+            }
+#endif
+        }
+
+        void destroyGameObject()
+        {
+#if !SLUA_STANDALONE
+#if UNITY_EDITOR
+            if (UnityEditor.EditorApplication.isPlaying)
+#endif
+            {
+                if (lgo != null)
+                {
+                    GameObject go = lgo.gameObject;
+                    GameObject.Destroy(lgo);
+                    GameObject.Destroy(go);
+                }
+            }
+#endif
+        }
+
         virtual protected void tick()
         {
             checkRef();
@@ -866,6 +911,7 @@ end
 
 		public void Close()
 		{
+            destroyGameObject();
             LuaTimer.DeleteAll(L);
 
             if (L != IntPtr.Zero)
