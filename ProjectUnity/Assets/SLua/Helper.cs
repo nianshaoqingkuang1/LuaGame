@@ -25,6 +25,7 @@ namespace SLua
 	using System.Collections;
 	using System;
 	using System.Reflection;
+	using System.Runtime.InteropServices;
 
     class LuaHelper : LuaObject
 	{

@@ -1,5 +1,4 @@
 ﻿using System;
-using LuaInterface;
 using SLua;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;

@@ -1,7 +1,6 @@
 
 
 using BestHTTP;
-using LuaInterface;
 using SLua;
 using System;
 using System.Collections;
@@ -620,10 +619,10 @@ public class GameUtil
 
     public static void LuaGC()
     {
-        if (null == LuaSvr.main || !LuaSvr.main.inited || null == LuaSvr.main.luaState)
+		if (!LuaSvr.inited)
             return;
 
-        LuaState luaState = LuaSvr.main.luaState;
+		LuaState luaState = LuaSvr.mainState;
         if (null == luaState)
             return;
         LuaDLL.lua_gc(luaState.L, LuaGCOptions.LUA_GCCOLLECT, 0);

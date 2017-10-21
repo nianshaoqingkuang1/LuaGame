@@ -28,6 +28,7 @@ namespace SLua
 #endif
 	using System;
 	using System.Reflection;
+	using System.Collections;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Enum | AttributeTargets.Struct | AttributeTargets.Delegate | AttributeTargets.Interface)]
 	public class CustomLuaClassAttribute : System.Attribute

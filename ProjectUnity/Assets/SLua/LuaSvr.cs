@@ -45,9 +45,10 @@ namespace SLua
 	public class LuaSvr 
 	{
 		static public MainState mainState;
+		static public bool inited = false;
 
 		public class MainState : LuaState {
-
+			
 			int errorReported = 0;
 
 			protected override void tick() {
@@ -66,6 +67,19 @@ namespace SLua
 					Logger.LogError(string.Format("Some function not remove temp value({0}) from lua stack. You should fix it.",LuaDLL.luaL_typename(L,errorReported)));
 				}
 			}
+		}
+
+		public void SetLoader(Func<string,byte[]> load)
+		{
+			mainState.loaderDelegate += (string fn) => {
+				return load (fn);
+			};
+		}
+
+		public void Close()
+		{
+			if (mainState != null)
+				mainState.Dispose ();
 		}
 
 		public LuaSvr()
@@ -194,6 +208,8 @@ namespace SLua
 
 			if((flag & LuaSvrFlag.LSF_3RDDLL)!=0)
 				Lua3rdDLL.open(L.L);
+
+			inited = true;
 
 		}
 

@@ -33,6 +33,7 @@ namespace SLua
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Runtime.CompilerServices;
+	using System.Runtime.InteropServices;
 
     public interface ICustomExportPost { }
 
@@ -46,7 +47,7 @@ namespace SLua
     public class LuaCodeGen : MonoBehaviour
 	{
 		static public string GenPath = "Assets/LuaInterface/LuaGenObject/";
-        static public string WrapperName = "sluaWrapper.dll";
+        static public string WrapperName = "luaWrapper.dll";
         public delegate void ExportGenericDelegate(Type t, string ns);
 
         static bool autoRefresh = true;
@@ -87,8 +88,7 @@ namespace SLua
             static void Update()
             {
                 EditorApplication.update -= Update;
-                Lua3rdMeta.Instance.ReBuildTypes();
-
+  
                 // Remind user to generate lua interface code
                 var remindGenerate = !EditorPrefs.HasKey("SLUA_REMIND_GENERTE_LUA_INTERFACE") || EditorPrefs.GetBool("SLUA_REMIND_GENERTE_LUA_INTERFACE");
                 bool ok = System.IO.Directory.Exists(GenPath + "Unity") || System.IO.File.Exists(GenPath + WrapperName);
@@ -184,9 +184,10 @@ namespace SLua
         {
             if (IsCompiling)
             {
+				Debug.LogWarning ("Please Run Later while unity is compile scripts");
                 return;
             }
-
+			Debug.Log ("Generate for " + asemblyName + " at path " + genAtPath);
             Assembly assembly;
             try { assembly = Assembly.Load(asemblyName); }
             catch (Exception) { return; }
@@ -260,6 +261,7 @@ namespace SLua
 		static public void Custom()
 		{
 			if (IsCompiling) {
+				Debug.LogWarning ("Please Run Later while unity is compile scripts");
 				return;
 			}
 
@@ -383,6 +385,7 @@ namespace SLua
 		static public void Generate3rdDll()
 		{
 			if (IsCompiling) {
+				Debug.LogWarning ("Please Run Later while unity is compile scripts");
 				return;
 			}
 
@@ -612,7 +615,6 @@ namespace SLua
 		{
 			//if (t.IsInterface)
 			//	return false;
-			
 			CodeGenerator cg = new CodeGenerator();
 			cg.givenNamespace = ns;
             cg.path = path;
@@ -830,6 +832,7 @@ namespace SLua
 		
 		public bool Generate(Type t)
 		{
+			Debug.Log(string.Format("Generate {0} in {1}", t.ToString(), givenNamespace));
 			if (!Directory.Exists(path))
 			{
 				Directory.CreateDirectory(path);
@@ -1010,7 +1013,7 @@ namespace SLua
 					return;
 				if (!Directory.Exists(LuaCodeGen.GenPath + "Delegagte"))
 					Directory.CreateDirectory(LuaCodeGen.GenPath + "Delegagte");
-                cg.path = this.path;
+				cg.path = LuaCodeGen.GenPath + "Delegagte/";
 				cg.Generate(t);
 				Debug.Log(t + " is bind to lua.");
 			}

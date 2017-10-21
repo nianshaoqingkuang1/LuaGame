@@ -59,7 +59,7 @@ do
 	    DontDestroyOnLoad(cam_root)
 	    --AudioListener
 	    local goAudio = NewGameObject("AudioListener")
-	    goAudio:AddComponent(UnityEngine.AudioListener)
+	    goAudio:AddComponent(LuaHelper.GetClsType("UnityEngine.AudioListener"))
 	    DontDestroyOnLoad(goAudio)
 	end
 

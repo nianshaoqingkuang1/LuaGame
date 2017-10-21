@@ -73,8 +73,8 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void SetupLua()
     {
-        LuaState.loaderDelegate = loadLuaFile;
         lua = new LuaSvr();
+		lua.SetLoader (loadLuaFile);
         lua.init(null, () =>
         {
             if (string.IsNullOrEmpty(EntryLuaScript))
@@ -131,9 +131,9 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void OnApplicationPause()
     {
-        if (null == lua || null == lua.luaState)
+		if (!LuaSvr.inited || null == LuaSvr.mainState)
             return;
-        LuaState l = lua.luaState;
+		LuaState l = LuaSvr.mainState;
         LuaFunction func = l.getFunction("OnApplicationPause");
         if (null != func)
         {
@@ -148,9 +148,9 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
 
     void OnApplicationQuit()
     {
-        if (null == lua || null == lua.luaState)
-            return;
-        LuaState l = lua.luaState;
+		if (!LuaSvr.inited || null == LuaSvr.mainState)
+			return;
+		LuaState l = LuaSvr.mainState;
         LuaFunction func = l.getFunction("OnApplicationQuit");
         if (null != func)
         {

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using LuaInterface;
 using System.Collections;
 using System.Collections.Generic;
 using System;

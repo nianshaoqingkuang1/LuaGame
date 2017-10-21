@@ -1,31 +1,8 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SLua/Timer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Editor/LuaCodeGen.cs">
     <Files>
-      <File FileName="Assets/Scripts/3rd/Best HTTP (Pro)/BestHTTP/Logger/DefaultLogger.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/EntryPoint.cs" Line="21" Column="18" />
-      <File FileName="Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaObject.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Common/ByteBuffer.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Manager/NetworkManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/Coroutine.cs" Line="1" Column="1" />
-      <File FileName="Assets/LuaInterface/LuaObject/Unity/LuaSystem_Func_1_bool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Utility/GameUtil.cs" Line="569" Column="6" />
-      <File FileName="Assets/Scripts/Manager/ResourceManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaState.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Utility/PersistentHumbleSingleton.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaSvr.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/ObjectCache.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaVarObject.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/Helper.cs" Line="1" Column="1" />
-      <File FileName="Assets/LuaInterface/LuaCustom/Lua_FGame_ByteBuffer_2.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaObject_basetype.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/LuaDLL.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/MainThreadTask.cs" Line="47" Column="29" />
-      <File FileName="Assets/LuaInterface/LuaObject/Custom/Lua_MainThreadTask.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Utility/UnZipUtil.cs" Line="100" Column="86" />
-      <File FileName="Assets/Scripts/Utility/PersistentSingleton.cs" Line="1" Column="1" />
-      <File FileName="Assets/SLua/Timer.cs" Line="292" Column="33" />
+      <File FileName="Assets/Scripts/Editor/LuaCodeGen.cs" Line="42" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
@@ -36,8 +13,7 @@
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_GameUtil.cs" line="370" column="1" />
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/SLua/LuaState.cs" line="360" column="1" />
       <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/LuaInterface/LuaObject/Custom/Lua_GameUtil.cs" line="193" column="1" />
-      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" line="69" column="1" />
-      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/Scripts/3rd/SuperSocket/FSuperSocket.cs" line="58" column="1" />
+      <Breakpoint file="/Volumes/SHARED/WorkSpace/Unity/LuaGame/ProjectUnity/Assets/Scripts/Editor/LuaCodeGen.cs" line="131" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

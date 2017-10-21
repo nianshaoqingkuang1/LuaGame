@@ -8,7 +8,6 @@ namespace SLua
 	using System;
 	using System.Reflection;
 	using UnityEditor;
-	using LuaInterface;
 	using System.Text;
 	using System.Text.RegularExpressions;
 

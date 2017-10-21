@@ -92,9 +92,9 @@ public static class LogUtil
 
     static bool ReportLog(LogType type,string str)
     {
-        if (null == SLua.LuaSvr.main || !SLua.LuaSvr.main.inited || null == SLua.LuaSvr.main.luaState)
-            return false;
-        SLua.LuaState l = SLua.LuaSvr.main.luaState;
+		if (!SLua.LuaSvr.inited || null == SLua.LuaSvr.mainState)
+			return false;
+		SLua.LuaState l = SLua.LuaSvr.mainState;
         if (null == l)
             return false;
         SLua.LuaFunction func = l.getFunction("OnUnityLog");

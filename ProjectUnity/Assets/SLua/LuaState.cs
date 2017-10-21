@@ -909,7 +909,7 @@ end
             return 0;
         }
 
-		public void Close()
+		void Close()
 		{
             destroyGameObject();
             LuaTimer.DeleteAll(L);
@@ -968,7 +968,7 @@ end
             LuaDLL.lua_pop(L, 1);
 
             string str = s.ToString();
-            Logger.LogError(str, true);
+            Logger.LogError(str);
             LuaState state = LuaState.get(L);
             if (state.errorDelegate != null)
             {
@@ -1131,7 +1131,7 @@ end
         {
             int n = LuaDLL.lua_gettop(L);
             string str = stackString(L,n);
-            Logger.LogWarn("[LUA]" + str);
+			Logger.LogWarning("[LUA]" + str);
 			LuaState state = LuaState.get(L);
             if (state.logDelegate != null)
             {

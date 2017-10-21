@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using System.IO;
+using System.Text;
 
 public class CustomHotKey : MonoBehaviour
 {
@@ -50,6 +51,23 @@ public class CustomHotKey : MonoBehaviour
 #else
 		Debug.LogWarning("not supported on current platform");
 #endif
+	}
+
+	//这里有bug
+	[MenuItem("Test/Writer")]
+	static void Test()
+	{
+		//写法2
+		StreamWriter file = new StreamWriter("1.txt", false, Encoding.UTF8);
+		file.WriteLine ("aaa");
+
+		StreamWriter file2 = new StreamWriter("2.txt", false, Encoding.UTF8);
+		file2.WriteLine ("bbb");
+		file2.Close ();
+
+		file.WriteLine ("ccc");
+		file.Close ();
+
 	}
 }
 #endif

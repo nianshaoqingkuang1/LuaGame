@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
 using UnityEngine;
-using LuaInterface;
 using SLua;
 /// <summary>
 /// 工具类，让子线程可以在主线程中调用代码

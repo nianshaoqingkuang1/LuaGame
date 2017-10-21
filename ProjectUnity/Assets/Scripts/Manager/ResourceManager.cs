@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
-using LuaInterface;
 using SLua;
 
 namespace FGame
