@@ -776,6 +776,7 @@ namespace SLua
 			public bool isInstance = true;
 		}
 		Dictionary<string, PropPair> propname = new Dictionary<string, PropPair>();
+		Dictionary<Type, bool> delegateFields = new Dictionary<Type, bool>();
 		
 		int indent = 0;
 
@@ -896,6 +897,9 @@ namespace SLua
 					}
 				}
 				
+                foreach (var vd in delegateFields) {
+					tryMake (vd.Key);
+				}
 				return true;
 			}
 			return false;
@@ -1622,8 +1626,11 @@ namespace SLua
 					pp.set = "set_" + fi.Name;
 				}
 				
-				propname.Add(fi.Name, pp);
-				tryMake(fi.FieldType);
+				if(!propname.ContainsKey(fi.Name))
+				    propname.Add(fi.Name, pp);
+				if(!delegateFields.ContainsKey(fi.FieldType))
+                	delegateFields.Add(fi.FieldType, true);
+				//tryMake(fi.FieldType);
 			}
 			//for this[]
 			List<PropertyInfo> getter = new List<PropertyInfo>();
@@ -1708,8 +1715,11 @@ namespace SLua
 				}
 				pp.isInstance = isInstance;
 				
-				propname.Add(fi.Name, pp);
-				tryMake(fi.PropertyType);
+				if (!propname.ContainsKey(fi.Name))
+					propname.Add(fi.Name, pp);
+				if(!delegateFields.ContainsKey(fi.PropertyType))
+					delegateFields.Add(fi.PropertyType, true);
+				//tryMake(fi.PropertyType);
 			}
 			//for this[]
 			WriteItemFunc(t, file, getter, setter);
@@ -2504,7 +2514,9 @@ namespace SLua
 					Write(file, "checkEnum(l,{0},out a{1});", n + argstart, n + 1);
 				else if (t.BaseType == typeof(System.MulticastDelegate))
 				{
-					tryMake(t);
+					//tryMake(t);
+					if(!delegateFields.ContainsKey(t))
+                		delegateFields.Add(t, true);
 					Write(file, "checkDelegate(l,{0},out a{1});", n + argstart, n + 1);
 				}
 				else if (isparams)
