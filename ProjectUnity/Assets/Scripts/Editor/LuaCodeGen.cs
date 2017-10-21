@@ -127,9 +127,13 @@ namespace SLua
 			if (IsCompiling) {
 				return;
 			}
-
+#if UNITY_2017_2_OR_NEWER
+			Assembly assembly = Assembly.Load("UnityEngine.CoreModule");
+			Type[] types = assembly.GetExportedTypes();
+#else
 			Assembly assembly = Assembly.Load("UnityEngine");
 			Type[] types = assembly.GetExportedTypes();
+#endif
 			
 			List<string> uselist;
 			List<string> noUseList;
@@ -168,8 +172,13 @@ namespace SLua
 
             List<Type> exports = new List<Type>();
 			string path = GenPath + "Unity/";
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
 			foreach (Type t in types)
 			{
+				Debug.Log("CheckType: "+t);
 				if (filterType(t, noUseList, uselist) && Generate(t, path))
 					exports.Add(t);
 			}
@@ -249,6 +258,10 @@ namespace SLua
 			
 			List<Type> exports = new List<Type>();
 			string path = GenPath + "Unity/";
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
 			foreach (Type t in types)
 			{
 				if (filterType(t,noUseList,uselist) && Generate(t,path))
@@ -703,8 +716,9 @@ namespace SLua
 					if (t.ContainsGenericParameters)
 						return false;
 
-					string f = DelegateExportFilename(path, t);
-					
+					string f = DelegateExportFilename(LuaCodeGen.GenPath + "Delegagte/", t);
+					if (!Directory.Exists(LuaCodeGen.GenPath + "Delegagte"))
+						Directory.CreateDirectory(LuaCodeGen.GenPath + "Delegagte");
 					StreamWriter file = new StreamWriter(f, false, Encoding.UTF8);
 					file.NewLine = NewLine;
 					WriteDelegate(t, file);
@@ -881,8 +895,10 @@ namespace SLua
 			if (t.BaseType == typeof(System.MulticastDelegate))
 			{
 				CodeGenerator cg = new CodeGenerator();
-				if (File.Exists(cg.DelegateExportFilename(LuaCodeGen.GenPath + "Unity/", t)))
+				if (File.Exists(cg.DelegateExportFilename(LuaCodeGen.GenPath + "Delegagte/", t)))
 					return;
+				if (!Directory.Exists(LuaCodeGen.GenPath + "Delegagte"))
+					Directory.CreateDirectory(LuaCodeGen.GenPath + "Delegagte");
                 cg.path = this.path;
 				cg.Generate(t);
 				Debug.Log(t + " is bind to lua.");

@@ -133,7 +133,11 @@ namespace BestHTTP
                     return texture;
 
                 texture = new UnityEngine.Texture2D(0, 0);
-                texture.LoadImage(Data);
+#if UNITY_2017_1_OR_NEWER
+				texture.LoadRawTextureData (Data);
+#else
+				texture.LoadImage(Data);
+#endif
                 return texture;
             }
         }

@@ -170,10 +170,9 @@ public sealed class AssetBundleSample : MonoBehaviour
 
         // Start loading the asset from the bundle
         var asyncAsset = 
-#if UNITY_5
+#if UNITY_2017_1_OR_NEWER
             cachedBundle.LoadAssetAsync("9443182_orig", typeof(Texture2D));
-#else
-        
+#else      
             cachedBundle.LoadAsync("9443182_orig", typeof(Texture2D));
 #endif
 
