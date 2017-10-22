@@ -98,9 +98,10 @@ do
 		DontDestroyOnLoad(musicGo)
 		--测试背景音
 		AsyncLoad(ResPathReader.BackgroundMusic, ResPathReader.BackgroundMusic, function(obj)
-			if obj and not obj.isNil then
+			warn("=======",obj)
+			--if obj and not obj.isNil then
 				backgroundMusic:PlayBackgroundMusic(obj)
-			end
+			--end
 		end)
 
 		local FWaitingUI = require "ui.FWaitingUI"

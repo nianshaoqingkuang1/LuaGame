@@ -132,7 +132,7 @@ do
 			warn("error " .. tostring(self) .. "(FindChildObj)".. ", self.m_panel is nil")
 			return nil
 		else
-			local transform = self.m_panel.transform:FindChild(objpath)
+			local transform = self.m_panel.transform:Find(objpath)
 			if not transform then
 				warn("error " .. tostring(self) .. "(FindChildObj):".. objpath)
 				return nil

@@ -36,12 +36,6 @@ namespace SLua
 	using Debug = UnityEngine.Debug;
 	#endif
 
-	public enum LuaSvrFlag {
-		LSF_BASIC = 0,
-		LSF_EXTLIB = 1,
-		LSF_3RDDLL = 2,
-	};
-
 	public class LuaSvr 
 	{
 		static public MainState mainState;
@@ -198,22 +192,18 @@ namespace SLua
 			return new Action<IntPtr>[0];
 		}
 
-        protected void doinit(LuaState L,LuaSvrFlag flag)
+        protected void doinit(LuaState L)
 		{
 			L.openSluaLib ();
-			LuaValueType.reg(L.L);
-			if ((flag & LuaSvrFlag.LSF_EXTLIB)!=0) {
-				L.openExtLib ();
-			}
-
-			if((flag & LuaSvrFlag.LSF_3RDDLL)!=0)
-				Lua3rdDLL.open(L.L);
-
+			LuaValueType.reg(L.L);			
+			L.openExtLib ();
+			Lua3rdDLL.open(L.L);
+				
 			inited = true;
 
 		}
 
-		public void init(Action<int> tick,Action complete,LuaSvrFlag flag=LuaSvrFlag.LSF_BASIC|LuaSvrFlag.LSF_EXTLIB)
+		public void init(Action<int> tick,Action complete)
 		{
 			
 			IntPtr L = mainState.L;
@@ -221,7 +211,7 @@ namespace SLua
 
 			#if SLUA_STANDALONE
 			doBind(L);
-			doinit(mainState, flag);
+			doinit(mainState);
 			complete();
 			mainState.checkTop();
 			#else
@@ -231,7 +221,7 @@ namespace SLua
 			if (!UnityEditor.EditorApplication.isPlaying)
 			{
 				doBind(L);
-				doinit(mainState, flag);
+				doinit(mainState);
 				complete();
 				mainState.checkTop();
 			}
@@ -240,7 +230,7 @@ namespace SLua
 			#endif
 				mainState.lgo.StartCoroutine(doBind(L,tick, () =>
 					{
-						doinit(mainState, flag);
+						doinit(mainState);
 						complete();
 						mainState.checkTop();
 					}));

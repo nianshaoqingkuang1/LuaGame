@@ -247,6 +247,7 @@ do
         if not self.m_EntryConfig.resource_update then
             warn("客户端禁止更新")
             self.m_UpdateFinished = true
+            self:OnFinished(true)
             return
         end
         print ("检查更新中。。。")
@@ -264,6 +265,8 @@ do
                         self:UpdateDirCoroutine()
                     end)
                     coroutine.resume(c)
+                else
+                    --self:OnFinished(false)
                 end
             end)
         else
@@ -402,8 +405,12 @@ do
     end
 
     function FGameUpdate:Finish()
-        self.m_UpdateSession:FinishWorking()
         self.m_UpdateFinished = true
+        self:OnFinished(true)
+    end
+
+    function FGameUpdate:OnFinished(succeess)
+        self.m_UpdateSession:FinishWorking()
     end
 
     function FGameUpdate:IsFinished()

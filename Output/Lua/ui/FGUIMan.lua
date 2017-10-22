@@ -41,10 +41,10 @@ do
 	    goCanvas.transform.localPosition = Vector3(0, 0, 0);
 	    goCanvas.transform.localScale = Vector3(1, 1, 1);
 	    local canvas = goCanvas:AddComponent(LuaHelper.GetClsType("UnityEngine.Canvas"));
-	    --canvas.renderMode = UnityEngine.RenderMode.ScreenSpaceCamera;
+	    canvas.renderMode = 1--UnityEngine.RenderMode.ScreenSpaceCamera;
 	    canvas.pixelPerfect = true
 	    canvas.worldCamera = cam
-	    warn("=====",canvas.worldCamera)
+	    warn("=====",canvas.renderMode)
 
 	    local canScaler = goCanvas:AddComponent(UnityEngine.UI.CanvasScaler);
 	    canScaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize

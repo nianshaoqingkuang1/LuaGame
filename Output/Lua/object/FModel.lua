@@ -47,16 +47,16 @@ do
 	function FModel:Play(aniname) 
 		local ani = self.m_ani
 		if not ani then return end
-		ani:Play(aniname,UnityEngine.PlayMode.StopSameLayer)
+		ani:Play(aniname,1)--UnityEngine.PlayMode.StopSameLayer)
 	end
 
 	function FModel:CrossFade(aniname, fade) 
 		local ani = self.m_ani
 		if not ani then return end
 		if fade == 0 then
-			ani:Play(aniname,UnityEngine.PlayMode.StopSameLayer)
+			ani:Play(aniname,1)--UnityEngine.PlayMode.StopSameLayer)
 		else
-			ani:CrossFade(aniname,fade,UnityEngine.PlayMode.StopSameLayer)
+			ani:CrossFade(aniname,fade,1)--UnityEngine.PlayMode.StopSameLayer)
 		end
 	end
 

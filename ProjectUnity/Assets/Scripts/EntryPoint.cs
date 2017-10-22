@@ -9,7 +9,6 @@ using System.Collections.Generic;
 public class EntryPoint : PersistentSingleton<EntryPoint>
 {
     public string EntryLuaScript = string.Empty;
-	public LuaSvrFlag SrvFlag = LuaSvrFlag.LSF_BASIC;
     public LogUtil.LogLevel logLevel = LogUtil.LogLevel.Info;
  
     private LuaSvr lua = null;
@@ -80,7 +79,7 @@ public class EntryPoint : PersistentSingleton<EntryPoint>
             if (string.IsNullOrEmpty(EntryLuaScript))
                 return;
 			lua.start(EntryLuaScript);
-        }, SrvFlag);        
+        });        
     }
 		
     byte[] loadLuaFile(string f)

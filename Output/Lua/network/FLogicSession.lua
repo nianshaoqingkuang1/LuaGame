@@ -55,8 +55,8 @@ do
 			if ret == MsgBoxRetT.MBRT_OK then
 				self:Connect()
 			else
-				--local FLoadingUI = require "ui.FLoadingUI"
-				--FLoadingUI.Instance():ShowPanel(true)
+				local FLoadingUI = require "ui.FLoadingUI"
+				FLoadingUI.Instance():ShowPanel(true)
 			end
 		end)
 	end
