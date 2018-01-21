@@ -1,4 +1,4 @@
-package message_common;
+package pb;
 
 message DirInfo {
 	optional bytes version			= 1;

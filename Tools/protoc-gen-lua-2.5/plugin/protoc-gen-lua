@@ -154,6 +154,8 @@ class Env(object):
         except:
             # if the child doesn't be founded, it must be in this file
             return type_name[len('.'.join(self.package)) + 2:]
+        if node.package == self.package:
+            return node.get_local_name()
         if node.filename != self.filename:
             return node.filename + '.' + node.get_local_name()
         return node.get_local_name()
@@ -423,7 +425,7 @@ def code_gen_file(proto_file, env, is_gen):
         write_header(lua)
         lua('local protobuf = require "protobuf.protobuf"\n')
         for i in includes:
-            lua('local %s_pb = require("%s_pb")\n' % (i, i))
+            lua('local %s_pb = require("pb.%s_pb")\n' % (i, i))
         lua("module('%s_pb')\n" % env.filename)
 
         lua('\n\n')

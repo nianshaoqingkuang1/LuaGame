@@ -12,7 +12,7 @@ local MESSAGE_MESSAGE_BODY_FIELD = protobuf.FieldDescriptor();
 
 
 DIRINFO_VERSION_FIELD.name = "version"
-DIRINFO_VERSION_FIELD.full_name = "message_common.DirInfo.version"
+DIRINFO_VERSION_FIELD.full_name = "pb.DirInfo.version"
 DIRINFO_VERSION_FIELD.number = 1
 DIRINFO_VERSION_FIELD.index = 0
 DIRINFO_VERSION_FIELD.label = 1
@@ -22,7 +22,7 @@ DIRINFO_VERSION_FIELD.type = 12
 DIRINFO_VERSION_FIELD.cpp_type = 9
 
 DIRINFO_PATCHES_FIELD.name = "patches"
-DIRINFO_PATCHES_FIELD.full_name = "message_common.DirInfo.patches"
+DIRINFO_PATCHES_FIELD.full_name = "pb.DirInfo.patches"
 DIRINFO_PATCHES_FIELD.number = 2
 DIRINFO_PATCHES_FIELD.index = 1
 DIRINFO_PATCHES_FIELD.label = 1
@@ -32,14 +32,14 @@ DIRINFO_PATCHES_FIELD.type = 12
 DIRINFO_PATCHES_FIELD.cpp_type = 9
 
 DIRINFO.name = "DirInfo"
-DIRINFO.full_name = "message_common.DirInfo"
+DIRINFO.full_name = "pb.DirInfo"
 DIRINFO.nested_types = {}
 DIRINFO.enum_types = {}
 DIRINFO.fields = {DIRINFO_VERSION_FIELD, DIRINFO_PATCHES_FIELD}
 DIRINFO.is_extendable = false
 DIRINFO.extensions = {}
 MESSAGE_MESSAGE_NAME_FIELD.name = "message_name"
-MESSAGE_MESSAGE_NAME_FIELD.full_name = "message_common.Message.message_name"
+MESSAGE_MESSAGE_NAME_FIELD.full_name = "pb.Message.message_name"
 MESSAGE_MESSAGE_NAME_FIELD.number = 1
 MESSAGE_MESSAGE_NAME_FIELD.index = 0
 MESSAGE_MESSAGE_NAME_FIELD.label = 1
@@ -49,7 +49,7 @@ MESSAGE_MESSAGE_NAME_FIELD.type = 9
 MESSAGE_MESSAGE_NAME_FIELD.cpp_type = 9
 
 MESSAGE_MESSAGE_BODY_FIELD.name = "message_body"
-MESSAGE_MESSAGE_BODY_FIELD.full_name = "message_common.Message.message_body"
+MESSAGE_MESSAGE_BODY_FIELD.full_name = "pb.Message.message_body"
 MESSAGE_MESSAGE_BODY_FIELD.number = 2
 MESSAGE_MESSAGE_BODY_FIELD.index = 1
 MESSAGE_MESSAGE_BODY_FIELD.label = 1
@@ -59,7 +59,7 @@ MESSAGE_MESSAGE_BODY_FIELD.type = 12
 MESSAGE_MESSAGE_BODY_FIELD.cpp_type = 9
 
 MESSAGE.name = "Message"
-MESSAGE.full_name = "message_common.Message"
+MESSAGE.full_name = "pb.Message"
 MESSAGE.nested_types = {}
 MESSAGE.enum_types = {}
 MESSAGE.fields = {MESSAGE_MESSAGE_NAME_FIELD, MESSAGE_MESSAGE_BODY_FIELD}

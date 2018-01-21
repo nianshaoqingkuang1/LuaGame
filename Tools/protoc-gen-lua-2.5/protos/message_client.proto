@@ -1,15 +1,17 @@
 import "message_common.proto";
 
-package message_client;
+package pb;
 
 message TestMessage {
 	optional int32 id      = 1;
 	optional bytes buff    = 2;
+	optional DirInfo info  = 3;
 }
 
 message TestMessage2 {
 	optional int32 id      = 1;
 	optional bytes buff    = 2;
+	optional TestMessage info = 3;
 }
 
 
