@@ -69,6 +69,9 @@ do
 			FGUIMan.Instance():RegisterPanel(assetName,self)
 			AsyncLoad(assetName,assetName,function(obj)
 				if obj then
+					if not self.m_loading then
+						return
+					end
 					self.m_panel = Instantiate(obj)
 					self.m_panel.name = self.m_panelName
 					self:_Create()
@@ -100,6 +103,8 @@ do
 		if self.m_panel ~= nil then
 			UnityEngine.Object.Destroy(self.m_panel)
 		end
+		self.m_loading = false
+		self.m_created = false
 	end
 
 	function FBaseUI:IsActive()

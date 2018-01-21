@@ -1093,6 +1093,7 @@ end
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         internal static int print(IntPtr L)
         {
+			printTrace = false;
             int n = LuaDLL.lua_gettop(L);
             string str = stackString(L,n);
             Logger.Log("[LUA]" + str);
@@ -1111,6 +1112,7 @@ end
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         internal static int printerror(IntPtr L)
         {
+			printTrace = true;
             int n = LuaDLL.lua_gettop(L);
             string str = stackString(L,n);
             Logger.LogError("[LUA]"+str);
@@ -1129,6 +1131,7 @@ end
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         internal static int warn(IntPtr L)
         {
+			printTrace = false;
             int n = LuaDLL.lua_gettop(L);
             string str = stackString(L,n);
 			Logger.LogWarning("[LUA]" + str);

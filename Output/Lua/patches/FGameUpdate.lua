@@ -222,6 +222,7 @@ do
             error("can not get local-version.xml",1)
         end
 
+        GameUtil.CreateDirectory(GameUtil.AssetRoot.."/Configs")
         local gameversion = GameUtil.AssetRoot.."/Configs/game_ver"
         if not GameUtil.IsAssetFileExists(gameversion) then
            local fp = io.open(gameversion,"wb")
@@ -405,11 +406,12 @@ do
     end
 
     function FGameUpdate:Finish()
-        self.m_UpdateFinished = true
         self:OnFinished(true)
+        self.m_UpdateFinished = true
     end
 
     function FGameUpdate:OnFinished(succeess)
+        FUpdateUI.Instance():ShowPanel(false)
         self.m_UpdateSession:FinishWorking()
     end
 

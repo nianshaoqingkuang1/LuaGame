@@ -35,6 +35,7 @@ function OnHotKeyInput( key, down )
 	elseif key == KeyCode.Escape then
 		theGame:ForceCloseConsole()
 	elseif key == KeyCode.UpArrow then
+		print(".........")
 		if theGame.m_HostPlayer then
 			theGame.m_HostPlayer:Play("Run",UnityEngine.WrapMode.Loop)
 		end

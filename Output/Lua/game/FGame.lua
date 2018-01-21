@@ -70,6 +70,11 @@ do
 		self.m_AssetBundle:InitAssetBundle()
 		--Camera
 		self:InitGameObject()
+		--Init FHotKeyLogic
+		local hotGo = NewGameObject("FHotKeyLogic")
+		local clsT = LuaHelper.GetClsType("FHotKeyLogic")
+		hotGo:AddComponent(clsT)
+		DontDestroyOnLoad(hotGo)
 	end
 
 	function FGame:Run()
@@ -87,12 +92,6 @@ do
 	end
 
 	function FGame:EnterGameLogic()
-		--Init FHotKeyLogic
-		local hotGo = NewGameObject("FHotKeyLogic")
-		local clsT = LuaHelper.GetClsType("FHotKeyLogic")
-		hotGo:AddComponent(clsT)
-		DontDestroyOnLoad(hotGo)
-
 		local musicGo = NewGameObject("BackgroundMusic")
 		local backgroundMusic = musicGo:AddComponent(LuaHelper.GetClsType("BackgroundMusic"))
 		DontDestroyOnLoad(musicGo)

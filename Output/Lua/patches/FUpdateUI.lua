@@ -29,6 +29,7 @@ do
 
 	function FUpdateUI:ShowPanel(show)
 		if show then
+			print("......>>>>>>>>>>>>>>>>>>.", debug.traceback())
 			if not self.m_panel then
 				self:CreatePanel(ResPathReader.UpdateUI)
 			end
