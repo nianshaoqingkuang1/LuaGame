@@ -27,7 +27,7 @@ do
 	end
 
 	function FUpdateSession:OnGameData(buffer)
-        local bytes = buffer:ReadBytesString()
+		local bytes = buffer:ReadBytesString()
 		local msg = self:BytesToMessage(bytes)
 		self.m_VersionInfo = msg.version
 		self.m_PatchesInfo = msg.patches

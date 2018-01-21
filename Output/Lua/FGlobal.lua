@@ -149,6 +149,10 @@ function string:split(sep)
 	return fields
 end
 
+function table:append(s)
+	table.insert(self, s)
+end
+
 function NewByteBuffer(data)
 	if not data then
 		return ByteBuffer()

@@ -71,7 +71,8 @@ do
 
 	function FNetwork:SendPB(pb_msg)
 		local meta = message_common_pb.Message()
-		meta.message_name = pb_msg:GetMessage():GetDescriptor().full_name
+		print(".........meta", meta.type, meta)
+		meta.message_type = pb_msg.type
 		meta.message_body = pb_msg:SerializeToString()
 
 		local msgbuf = meta:SerializeToString()
@@ -82,15 +83,10 @@ do
 	function FNetwork:BytesToMessage(data)
 		local meta = message_common_pb.Message()
 		meta:ParseFromString(data)
-		local fileds = meta.message_name:split(".")
-		local module_,class_ = fileds[1],fileds[2]
-		local pb_module = require ("pb."..module_.."_pb")
-		local msg
-		if type(pb_module) == "table" then
-			msg = pb_module[class_]()
-		else
-			msg = _G[module_.."_pb"][class_]()
-		end
+		local msgId = meta.message_type
+		local FPBHelper = require "pb.FPBHelper"
+		local cls = FPBHelper.GetPbClass(msgId)
+		local msg = cls()
 		msg:ParseFromString(meta.message_body)
 		return msg
 	end

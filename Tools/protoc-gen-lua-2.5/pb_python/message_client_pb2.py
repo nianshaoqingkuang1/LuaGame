@@ -18,8 +18,8 @@ import message_common_pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='message_client.proto',
-  package='message_client',
-  serialized_pb=_b('\n\x14message_client.proto\x12\x0emessage_client\x1a\x14message_common.proto\"\'\n\x0bTestMessage\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04\x62uff\x18\x02 \x01(\x0c\"(\n\x0cTestMessage2\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04\x62uff\x18\x02 \x01(\x0c')
+  package='pb',
+  serialized_pb=_b('\n\x14message_client.proto\x12\x02pb\x1a\x14message_common.proto\"u\n\x0bTestMessage\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32\x0c.pb.NET_TYPE:\x15NET_TYPE_TESTMESSAGE1\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0c\n\x04\x62uff\x18\x03 \x01(\x0c\x12\x19\n\x04info\x18\x04 \x01(\x0b\x32\x0b.pb.DirInfo\"z\n\x0cTestMessage2\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32\x0c.pb.NET_TYPE:\x15NET_TYPE_TESTMESSAGE2\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0c\n\x04\x62uff\x18\x03 \x01(\x0c\x12\x1d\n\x04info\x18\x04 \x01(\x0b\x32\x0f.pb.TestMessage')
   ,
   dependencies=[message_common_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -29,22 +29,36 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _TESTMESSAGE = _descriptor.Descriptor(
   name='TestMessage',
-  full_name='message_client.TestMessage',
+  full_name='pb.TestMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='message_client.TestMessage.id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
+      name='type', full_name='pb.TestMessage.type', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=True, default_value=3,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='id', full_name='pb.TestMessage.id', index=1,
+      number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='buff', full_name='message_client.TestMessage.buff', index=1,
-      number=2, type=12, cpp_type=9, label=1,
+      name='buff', full_name='pb.TestMessage.buff', index=2,
+      number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='info', full_name='pb.TestMessage.info', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -59,29 +73,43 @@ _TESTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=62,
-  serialized_end=101,
+  serialized_start=50,
+  serialized_end=167,
 )
 
 
 _TESTMESSAGE2 = _descriptor.Descriptor(
   name='TestMessage2',
-  full_name='message_client.TestMessage2',
+  full_name='pb.TestMessage2',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='message_client.TestMessage2.id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
+      name='type', full_name='pb.TestMessage2.type', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=True, default_value=4,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='id', full_name='pb.TestMessage2.id', index=1,
+      number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='buff', full_name='message_client.TestMessage2.buff', index=1,
-      number=2, type=12, cpp_type=9, label=1,
+      name='buff', full_name='pb.TestMessage2.buff', index=2,
+      number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='info', full_name='pb.TestMessage2.info', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -96,24 +124,28 @@ _TESTMESSAGE2 = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=103,
-  serialized_end=143,
+  serialized_start=169,
+  serialized_end=291,
 )
 
+_TESTMESSAGE.fields_by_name['type'].enum_type = message_common_pb2._NET_TYPE
+_TESTMESSAGE.fields_by_name['info'].message_type = message_common_pb2._DIRINFO
+_TESTMESSAGE2.fields_by_name['type'].enum_type = message_common_pb2._NET_TYPE
+_TESTMESSAGE2.fields_by_name['info'].message_type = _TESTMESSAGE
 DESCRIPTOR.message_types_by_name['TestMessage'] = _TESTMESSAGE
 DESCRIPTOR.message_types_by_name['TestMessage2'] = _TESTMESSAGE2
 
 TestMessage = _reflection.GeneratedProtocolMessageType('TestMessage', (_message.Message,), dict(
   DESCRIPTOR = _TESTMESSAGE,
   __module__ = 'message_client_pb2'
-  # @@protoc_insertion_point(class_scope:message_client.TestMessage)
+  # @@protoc_insertion_point(class_scope:pb.TestMessage)
   ))
 _sym_db.RegisterMessage(TestMessage)
 
 TestMessage2 = _reflection.GeneratedProtocolMessageType('TestMessage2', (_message.Message,), dict(
   DESCRIPTOR = _TESTMESSAGE2,
   __module__ = 'message_client_pb2'
-  # @@protoc_insertion_point(class_scope:message_client.TestMessage2)
+  # @@protoc_insertion_point(class_scope:pb.TestMessage2)
   ))
 _sym_db.RegisterMessage(TestMessage2)
 

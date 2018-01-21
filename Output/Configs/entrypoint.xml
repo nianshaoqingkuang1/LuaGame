@@ -5,7 +5,7 @@
     <!--program_updage 是否允许程序更新-->
     <program_updage>false</program_updage>
     <!--resource_update 是否允许更新-->
-    <resource_update>false</resource_update>
+    <resource_update>true</resource_update>
     <!--dirserver dir地址信息-->
     <dirserver host="127.0.0.1" port="8002" />
 </entrypoint>
